@@ -1,27 +1,21 @@
-"use client";
-import React, { useState } from 'react';
+import React from 'react';
 import { Product } from '../interfaces/products';
 import Link from 'next/link';
-// import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { replaceSpacesWithDashes } from '../utils';
 
-const CardProduct = ({ product }: { product: Product }) => {
+interface CardProductProps {
+    product: Product;
+    handleProductClick?: (product: Product) => void;
+}
 
-    // const router = useRouter();
-
-    const [showDetails, setShowDetails] = useState(false);
-
-    const handleProductClick = () => {
-        // router.push('/product/' + replaceSpacesWithDashes(product.name));
-        setShowDetails(true);
-        console.log('click');
-    }
+const CardProduct = ({ product, handleProductClick }: CardProductProps) => {
 
     return (
         <div key={product.id} className="group relative">
             <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
             <Image
+                priority
                 src={product.imagesSrc[0]}
                 alt={product.name}
                 width={550}
@@ -35,7 +29,7 @@ const CardProduct = ({ product }: { product: Product }) => {
                 <Link 
                     href={'/product/' + replaceSpacesWithDashes(product.name)}
                     // href={'#'}
-                    // onClick={handleProductClick}
+                    // onClick={() => handleProductClick(product)}
                     >
                     <span aria-hidden="true" className="absolute inset-0" />
                     {product.name}

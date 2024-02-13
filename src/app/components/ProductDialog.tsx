@@ -3,44 +3,50 @@ import { Fragment, useState } from 'react';
 import { Dialog, RadioGroup, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { StarIcon } from '@heroicons/react/20/solid';
+import { Product } from '../interfaces/products';
 
-const product = {
-  name: 'Basic Tee 6-Pack ',
-  price: '$192',
-  rating: 3.9,
-  reviewCount: 117,
-  href: '#',
-  imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-quick-preview-02-detail.jpg',
-  imageAlt: 'Two each of gray, white, and black shirts arranged on table.',
-  colors: [
-    { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
-    { name: 'Gray', class: 'bg-gray-200', selectedClass: 'ring-gray-400' },
-    { name: 'Black', class: 'bg-gray-900', selectedClass: 'ring-gray-900' },
-  ],
-  sizes: [
-    { name: 'XXS', inStock: true },
-    { name: 'XS', inStock: true },
-    { name: 'S', inStock: true },
-    { name: 'M', inStock: true },
-    { name: 'L', inStock: true },
-    { name: 'XL', inStock: true },
-    { name: 'XXL', inStock: true },
-    { name: 'XXXL', inStock: false },
-  ],
-}
+// const product = {
+//   name: 'Basic Tee 6-Pack ',
+//   price: '$192',
+//   rating: 3.9,
+//   reviewCount: 117,
+//   href: '#',
+//   imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-quick-preview-02-detail.jpg',
+//   imageAlt: 'Two each of gray, white, and black shirts arranged on table.',
+//   colors: [
+//     { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
+//     { name: 'Gray', class: 'bg-gray-200', selectedClass: 'ring-gray-400' },
+//     { name: 'Black', class: 'bg-gray-900', selectedClass: 'ring-gray-900' },
+//   ],
+//   sizes: [
+//     { name: 'XXS', inStock: true },
+//     { name: 'XS', inStock: true },
+//     { name: 'S', inStock: true },
+//     { name: 'M', inStock: true },
+//     { name: 'L', inStock: true },
+//     { name: 'XL', inStock: true },
+//     { name: 'XXL', inStock: true },
+//     { name: 'XXXL', inStock: false },
+//   ],
+// }
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function ProductDetails({ product: Products, isShow, setShowDetails }: { product: any, isShow: boolean, setShowDetails: any }) {
-  const [open, setOpen] = useState(isShow)
+interface ProductDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  product: Product;
+}
+
+export default function ProductDialog({ isOpen, onClose, product }: ProductDialogProps) {
   const [selectedColor, setSelectedColor] = useState(product.colors[0])
   const [selectedSize, setSelectedSize] = useState(product.sizes[2])
 
   return (
-    <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+    <Transition.Root show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -69,7 +75,7 @@ export default function ProductDetails({ product: Products, isShow, setShowDetai
                   <button
                     type="button"
                     className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
-                    onClick={() => setOpen(false)}
+                    onClick={() => onClose()}
                   >
                     <span className="sr-only">Close</span>
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -77,7 +83,7 @@ export default function ProductDetails({ product: Products, isShow, setShowDetai
 
                   <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8">
                     <div className="aspect-h-3 aspect-w-2 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-5">
-                      <img src={product.imageSrc} alt={product.imageAlt} className="object-cover object-center" />
+                      <img src={product.imagesSrc[0]} alt={product.name} className="object-cover object-center" />
                     </div>
                     <div className="sm:col-span-8 lg:col-span-7">
                       <h2 className="text-2xl font-bold text-gray-900 sm:pr-12">{product.name}</h2>
@@ -98,16 +104,16 @@ export default function ProductDetails({ product: Products, isShow, setShowDetai
                                 <StarIcon
                                   key={rating}
                                   className={classNames(
-                                    product.rating > rating ? 'text-gray-900' : 'text-gray-200',
+                                    Number(product.id) > rating ? 'text-gray-900' : 'text-gray-200',
                                     'h-5 w-5 flex-shrink-0'
                                   )}
                                   aria-hidden="true"
                                 />
                               ))}
                             </div>
-                            <p className="sr-only">{product.rating} out of 5 stars</p>
+                            <p className="sr-only">{product.id} out of 5 stars</p>
                             <a href="#" className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                              {product.reviewCount} reviews
+                              {product.id} reviews
                             </a>
                           </div>
                         </div>
@@ -124,15 +130,15 @@ export default function ProductDetails({ product: Products, isShow, setShowDetai
                             <h4 className="text-sm font-medium text-gray-900">Color</h4>
 
                             <RadioGroup value={selectedColor} onChange={setSelectedColor} className="mt-4">
-                              <RadioGroup.Label className="sr-only">Choose a color</RadioGroup.Label>
+                              <RadioGroup.Label className="sr-only">Colores disponibles</RadioGroup.Label>
                               <span className="flex items-center space-x-3">
                                 {product.colors.map((color) => (
                                   <RadioGroup.Option
-                                    key={color.name}
+                                    key={color}
                                     value={color}
                                     className={({ active, checked }) =>
                                       classNames(
-                                        color.selectedClass,
+                                        color,
                                         active && checked ? 'ring ring-offset-1' : '',
                                         !active && checked ? 'ring-2' : '',
                                         'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none'
@@ -140,12 +146,12 @@ export default function ProductDetails({ product: Products, isShow, setShowDetai
                                     }
                                   >
                                     <RadioGroup.Label as="span" className="sr-only">
-                                      {color.name}
+                                      {color}
                                     </RadioGroup.Label>
                                     <span
                                       aria-hidden="true"
                                       className={classNames(
-                                        color.class,
+                                        color,
                                         'h-8 w-8 rounded-full border border-black border-opacity-10'
                                       )}
                                     />
@@ -169,12 +175,14 @@ export default function ProductDetails({ product: Products, isShow, setShowDetai
                               <div className="grid grid-cols-4 gap-4">
                                 {product.sizes.map((size) => (
                                   <RadioGroup.Option
-                                    key={size.name}
+                                    key={size}
                                     value={size}
-                                    disabled={!size.inStock}
+                                    // disabled={!size.inStock}
+                                    disabled={true}
                                     className={({ active }) =>
                                       classNames(
-                                        size.inStock
+                                        // size.inStock
+                                        true
                                           ? 'cursor-pointer bg-white text-gray-900 shadow-sm'
                                           : 'cursor-not-allowed bg-gray-50 text-gray-200',
                                         active ? 'ring-2 ring-indigo-500' : '',
@@ -184,8 +192,8 @@ export default function ProductDetails({ product: Products, isShow, setShowDetai
                                   >
                                     {({ active, checked }) => (
                                       <>
-                                        <RadioGroup.Label as="span">{size.name}</RadioGroup.Label>
-                                        {size.inStock ? (
+                                        <RadioGroup.Label as="span">{size}</RadioGroup.Label>
+                                        {size ? (
                                           <span
                                             className={classNames(
                                               active ? 'border' : 'border-2',
@@ -221,7 +229,7 @@ export default function ProductDetails({ product: Products, isShow, setShowDetai
                             type="submit"
                             className="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                           >
-                            Add to bag
+                            Ver producto
                           </button>
                         </form>
                       </section>
