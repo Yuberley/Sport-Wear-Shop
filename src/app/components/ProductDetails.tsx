@@ -6,6 +6,7 @@ import { Product, Colors } from '../interfaces/products';
 import {
     usePathname,
 } from 'next/navigation';
+import Image from 'next/image';
 
 const productX = {
     highlights: [
@@ -31,8 +32,6 @@ const ProductDetails = ({
     colorsSource: Colors[], 
     sizesSource: string[] 
 }) => {
-
-
 
     const colorsAvailable = colorsSource
 		.filter((color) => product.colors.includes(color.color))
@@ -62,10 +61,8 @@ const ProductDetails = ({
     const [selectedColor, setSelectedColor] = useState(newProduct.colors[0])
     const [selectedSize, setSelectedSize] = useState(newProduct.sizes[0])
 
-
     const pathname = usePathname();
 
-    // TODO: Cambiar el número de teléfono por el de la tienda y la url por la del producto
     const currentUrl = `https://ylsport.me${pathname}?name=${product.name}&id=${product.id}`;
     const phone = '573102614670';
     // const phone = '573003107055';
@@ -74,42 +71,44 @@ const ProductDetails = ({
 
     const whatsappHref = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(whatsappMessage)}`;
 
+    // console.log('newProduct', newProduct);
+
+    
     return (
         <div className="bg-white">
             <div className="pt-6">
 
                 {/* Image gallery */}
-                <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
-                    <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block">
-                        <img
-                            src={newProduct.imagesSrc[0]}
-                            alt={newProduct.name}
-                            className="h-full w-full object-cover object-center"
-                        />
-                    </div>
-                    <div className="hidden lg:grid lg:grid-cols-1 lg:gap-y-8">
-                        <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
-                            <img
-                                src={newProduct.imagesSrc[0]}
-                                alt={newProduct.name}
-                                className="h-full w-full object-cover object-center"
-                            />
-                        </div>
-                        <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
-                            <img
-                                src={newProduct.imagesSrc[0]}
-                                alt={newProduct.name}
-                                className="h-full w-full object-cover object-center"
-                            />
-                        </div>
-                    </div>
-                    <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 sm:overflow-hidden sm:rounded-lg">
-                        <img
-                            src={newProduct.imagesSrc[0]}
-                            alt={newProduct.name}
-                            className="h-full w-full object-cover object-center"
-                        />
-                    </div>
+                <div 
+                    className={
+                        `mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:grid-cols-${newProduct.imagesSrc.length} lg:gap-x-8 lg:px-8
+                        ${newProduct.imagesSrc.length === 1 && 'lg:max-w-md'}
+                        ${newProduct.imagesSrc.length === 2 && 'lg:max-w-[54rem]'}
+                        ${newProduct.imagesSrc.length === 3 && 'lg:max-w-7xl'}
+                        `
+                    }
+                >
+
+                    {
+                        newProduct.imagesSrc.map((image, index) => (
+                            <div 
+                                key={index} 
+                                className={
+                                    `aspect-h-4 aspect-w-3 overflow-hidden rounded-lg 
+                                    ${index > 0 ? 'hidden lg:block' : ''}`
+                                    }
+                                >
+                                <Image
+                                    priority
+                                    width={1000}
+                                    height={1000}
+                                    src={image.trim()}
+                                    alt={newProduct.name}
+                                    className="h-full w-full object-cover object-center"
+                                />
+                            </div>
+                        ))
+                    }
                 </div>
 
                 {/* newProduct info */}
@@ -139,8 +138,6 @@ const ProductDetails = ({
                             </div>
                         }
                         
-
-
                         <form className="mt-10">
                             {/* Colors */}
                             <div>
@@ -246,7 +243,7 @@ const ProductDetails = ({
                                 href={whatsappHref}
                                 className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                             >
-                                Contactar por WhatsApp 🤗
+                                Pedir por WhatsApp 🤗
                             </a>
                         </form>
                     </div>

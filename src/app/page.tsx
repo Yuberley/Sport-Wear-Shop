@@ -1,8 +1,15 @@
 import ListProducts from "./components/ListProducts";
 import { Suspense } from "react";
 import { ListProductsSkeleton } from "../app/skeletons";
+import { getProductsCached } from "@/lib/GoogleSheets";
+import { getColors, getSizes, getCategories } from "@/lib/GoogleSheets/lists";
 
 export default async function Home() {
+
+    getProductsCached();
+    getCategories();
+    getColors();
+    getSizes();
 
     return (
         <div className="bg-white">

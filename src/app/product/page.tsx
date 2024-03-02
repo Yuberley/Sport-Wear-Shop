@@ -2,6 +2,8 @@ import React from 'react'
 import ProductDetails from '../components/ProductDetails';
 import { getProductById } from '@/lib/GoogleSheets';
 import { getColors, getSizes } from '@/lib/GoogleSheets/lists';
+import { Suspense } from "react";
+import ProducDetailsSkeleton from "@/app/skeletons";
 
 interface PageProps {
     searchParams?: {
@@ -35,8 +37,9 @@ export default async function Page({ searchParams }: PageProps) {
     const sizesSource = await getSizes();
 
     return (
-        <>
+        // <ProducDetailsSkeleton />
+        <Suspense fallback={<ProducDetailsSkeleton />}>
             <ProductDetails product={product} colorsSource={colorsSource} sizesSource={sizesSource} />
-        </>
+        </Suspense>
     );
 };

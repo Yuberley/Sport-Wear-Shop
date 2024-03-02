@@ -2,40 +2,18 @@
 import React, { useState } from 'react';
 import { Fragment } from 'react'
 import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
-import {
-    ArrowPathIcon,
-    Bars3Icon,
-    ChartPieIcon,
-    CursorArrowRaysIcon,
-    FingerPrintIcon,
-    SquaresPlusIcon,
-    XMarkIcon,
-} from '@heroicons/react/24/outline'
-import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link';
+import Image from 'next/image';
 import { replaceSpacesWithDashes } from '../utils';
-
-const products = [
-    { name: 'Sujetadores', href: '#', icon: ChartPieIcon },
-    { name: 'Conjuntos', href: '#', icon: CursorArrowRaysIcon },
-    { name: 'Biker', href: '#', icon: FingerPrintIcon },
-    { name: 'Short Push Up', href: '#', icon: SquaresPlusIcon },
-    { name: 'Pantalonetas', href: '#', icon: ArrowPathIcon },
-    { name: 'Leggings', href: '#', icon: ArrowPathIcon },
-    { name: 'Enterizos Deportivos', href: '#', icon: ArrowPathIcon },
-    { name: 'Camiseta Oversizes', href: '#', icon: ArrowPathIcon },
-    { name: 'Camiseta Deportiva', href: '#', icon: ArrowPathIcon },
-]
-const callsToAction = [
-    { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
-    { name: 'Contact sales', href: '#', icon: PhoneIcon },
-]
+import LogoYLSPORT from './../../../public/logo_ylsport.jpg';
 
 function classNames(...classes: (string | boolean | null | undefined)[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Header() {
+export default function Header({ categories }: Readonly<{categories: string[]}>) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     return (
@@ -44,7 +22,13 @@ export default function Header() {
                 <div className="flex lg:flex-1">
                     <Link href="/" className="-m-6 p-1.5">
                         <span className="sr-only">YL Sport Wear</span>
-                        <img className="h-20 w-auto" src="logo_ylsport.jpg" alt="" />
+                        <Image 
+                            width={300}
+                            height={300}
+                            className="h-20 w-auto" 
+                            src={LogoYLSPORT}
+                            alt="logo"
+                        />
                     </Link>
                 </div>
                 <div className="flex lg:hidden">
@@ -82,21 +66,23 @@ export default function Header() {
                         >
                             <Popover.Panel className="absolute -left-8 top-full z-20 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                                 <div className="p-4">
-                                    {products.map((item) => (
+                                    {categories.map((category) => (
                                         <div
-                                            key={item.name}
+                                            key={category}
                                             className="group relative flex items-center gap-x-6 rounded-lg p-3 text-sm leading-6 hover:bg-gray-50"
                                         >
-                                            {/* <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                                <item.icon className="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
-                                            </div> */}
+                                            <div className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#9ca3a9" className="w-5 h-5">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg>
+                                            </div>
                                             <div className="flex-auto">
                                                 <Link 
-                                                        href={'/categories/' + replaceSpacesWithDashes(item.name)}
+                                                        href={'/categories/' + replaceSpacesWithDashes(category)}
                                                         onClick={() => setMobileMenuOpen(false)}
                                                         className="block font-semibold text-gray-900"
                                                     >
-                                                        {item.name}
+                                                        {category.charAt(0).toUpperCase() + category.slice(1)}
                                                     <span className="absolute inset-0" />
                                                 </Link>
                                                 {/* <p className="mt-1 text-gray-600">{item.description}</p> */}
@@ -137,10 +123,12 @@ export default function Header() {
                     <div className="flex items-center justify-between">
                         <a href="#" className="-m-1.5 p-1.5">
                             <span className="sr-only">YL Sport Wear</span>
-                            <img
+                            <Image
+                                width={300}
+                                height={300}
                                 className="h-8 w-auto"
-                                src="logo_ylsport.jpg"
-                                alt=""
+                                src={LogoYLSPORT}
+                                alt="logo"
                             />
                         </a>
                         <button
@@ -166,14 +154,14 @@ export default function Header() {
                                                 />
                                             </Disclosure.Button>
                                             <Disclosure.Panel className="mt-2 space-y-2">
-                                                {[...products, ...callsToAction].map((item) => (
+                                                {categories.map((category) => (
                                                     <Disclosure.Button
-                                                        key={item.name}
+                                                        key={category}
                                                         as="a"
-                                                        href={item.href}
+                                                        href={'/categories/' + replaceSpacesWithDashes(category)}
                                                         className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                                     >
-                                                        {item.name}
+                                                        {category.charAt(0).toUpperCase() + category.slice(1)}
                                                     </Disclosure.Button>
                                                 ))}
                                             </Disclosure.Panel>
