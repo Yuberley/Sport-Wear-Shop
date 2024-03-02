@@ -141,11 +141,11 @@ const ProductDetails = ({
                         <form className="mt-10">
                             {/* Colors */}
                             <div>
-                                <h3 className="text-sm font-medium text-gray-900">Color</h3>
+                                <h3 className="text-sm font-medium text-gray-900">Colores</h3>
 
                                 <RadioGroup value={selectedColor} onChange={setSelectedColor}
                                 className="mt-4">
-                                    <RadioGroup.Label className="sr-only">Choose a color</RadioGroup.Label>
+                                    <RadioGroup.Label className="sr-only">Elige un color</RadioGroup.Label>
                                     <div className="flex items-center space-x-3">
                                         {newProduct.colors.map((color) => (
                                             <RadioGroup.Option
@@ -182,7 +182,7 @@ const ProductDetails = ({
                             {/* Sizes */}
                             <div className="mt-10">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-sm font-medium text-gray-900">Size</h3>
+                                    <h3 className="text-sm font-medium text-gray-900">Tallas</h3>
                                 </div>
 
                                 <RadioGroup value={selectedSize} onChange={setSelectedSize} className="mt-4">

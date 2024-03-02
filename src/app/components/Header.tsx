@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Fragment } from 'react'
 import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
@@ -15,6 +15,20 @@ function classNames(...classes: (string | boolean | null | undefined)[]) {
 
 export default function Header({ categories }: Readonly<{categories: string[]}>) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    // const menuRef = useRef<HTMLDivElement>(null);
+
+    // useEffect(() => {
+    //     function handleClickOutside(event: MouseEvent) {
+    //         if (true) {
+    //             setMobileMenuOpen(false);
+    //         }
+    //     }
+
+    //     document.addEventListener("mousedown", handleClickOutside);
+    //     return () => {
+    //         document.removeEventListener("mousedown", handleClickOutside);
+    //     };
+    // }, [menuRef]);
 
     return (
         <header className="bg-white">
@@ -155,45 +169,40 @@ export default function Header({ categories }: Readonly<{categories: string[]}>)
                                             </Disclosure.Button>
                                             <Disclosure.Panel className="mt-2 space-y-2">
                                                 {categories.map((category) => (
-                                                    <Disclosure.Button
+                                                    <Link
                                                         key={category}
-                                                        as="a"
                                                         href={'/categories/' + replaceSpacesWithDashes(category)}
                                                         className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                                        onClick={() => setMobileMenuOpen(false)}
                                                     >
                                                         {category.charAt(0).toUpperCase() + category.slice(1)}
-                                                    </Disclosure.Button>
+                                                    </Link>
                                                 ))}
                                             </Disclosure.Panel>
                                         </>
                                     )}
                                 </Disclosure>
-                                <a
-                                    href="#"
+                                <Link
+                                    href="/"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    onClick={() => setMobileMenuOpen(false)}
                                 >
                                     Productos
-                                </a>
+                                </Link>
                                 <Link
                                     href="/soon"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    onClick={() => setMobileMenuOpen(false)}
                                 >
                                     Próximamente
                                 </Link>
                                 <Link 
                                     href="/contact"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    onClick={() => setMobileMenuOpen(false)}
                                 >
                                   Contacto
                                 </Link>
-                            </div>
-                            <div className="py-6">
-                                <a
-                                    href="#"
-                                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                >
-                                    Log in
-                                </a>
                             </div>
                         </div>
                     </div>
