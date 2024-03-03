@@ -41,11 +41,8 @@ const getDataTypes = async (sheet: string, range: string): Promise<any[]> => {
 export const getCategories = async (): Promise<string[]> => {
 
     if (cachedCategories) {
-        console.log('Obteniendo categorías de la caché');
         return cachedCategories;
     }
-
-    console.log('Obteniendo categorías de Google Sheets');
 
     const categoriesRows = await getDataTypes('Types', 'A2:A');
     const categories: string[] = categoriesRows.map((row) => row[0]);
@@ -57,11 +54,8 @@ export const getCategories = async (): Promise<string[]> => {
 export const getColors = async (): Promise<Colors[]> => {
 
     if (cachedColors && Date.now() - lastTimeCached < timeToCache) {
-        console.log('Obteniendo colores de la caché');
         return cachedColors;
     }
-
-    console.log('Obteniendo colores de Google Sheets');
     
     const colorsRow = await getDataTypes('Types', 'C2:D');
     const colors: Colors[] = colorsRow.map((row) => ({ color: row[0], value: row[1] }));
@@ -73,11 +67,8 @@ export const getColors = async (): Promise<Colors[]> => {
 export const getSizes = async (): Promise<string[]> => {
 
     if (cachedSizes && Date.now() - lastTimeCached < timeToCache) {
-        console.log('Obteniendo tallas de la caché');
         return cachedSizes;
     }
-    
-    console.log('Obteniendo tallas de Google Sheets');
     
     const sizesRows = await getDataTypes('Types', 'F2:F');
     const sizes: string[] = sizesRows.map((row) => row[0]);

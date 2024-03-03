@@ -13,12 +13,11 @@ let cachedProducts: Product[] | null = null;
 let lastTimeCached: number = 0;
 const timeToCache = 1000 * 60 * 5; // 5 minutos
 
-// TODO: hacer que cachee los productos por siempre hasta recargar la página
-
 export const getProductsCached = async (category?: string): Promise<Product[]> => {
+
     try {
-        if (cachedProducts && Date.now() - lastTimeCached < timeToCache) {
-            console.log('Obteniendo productos de la caché');
+
+        if (cachedProducts?.length && Date.now() - lastTimeCached < timeToCache) {
             if (category) {
                 return cachedProducts.filter(
                     (product) => product.category.toLowerCase() === category.replace(/-/g, ' ').toLowerCase()
@@ -27,7 +26,6 @@ export const getProductsCached = async (category?: string): Promise<Product[]> =
             return cachedProducts;
         }
 
-        console.log('Obteniendo productos de Google Sheets');
         
         const auth = await authGoogle.getClient({
             credentials: serviceAccount,

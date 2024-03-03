@@ -3,9 +3,6 @@ import { Product } from "../interfaces/products";
 import { getProductsCached } from "@/lib/GoogleSheets";
 
 
-// http://localhost:3000/category/leggins
-
-
 export default async function ListProducts({category}: {category?: string}) {
 
     const products = await getProductsCached(category);
@@ -13,7 +10,7 @@ export default async function ListProducts({category}: {category?: string}) {
     if (!products.length) {
         return (
             <p className="text-center mt-4 text-gray-500 text-2xl">
-                No hay productos disponibles en esta categoría 🥺
+                No hay productos disponibles 🥺
             </p>
         );
     };

@@ -6,8 +6,6 @@ import { getColors, getSizes, getCategories } from "@/lib/GoogleSheets/lists";
 
 export default async function Home() {
 
-    getProductsCached();
-    getCategories();
     getColors();
     getSizes();
 

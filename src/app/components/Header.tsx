@@ -14,21 +14,8 @@ function classNames(...classes: (string | boolean | null | undefined)[]) {
 }
 
 export default function Header({ categories }: Readonly<{categories: string[]}>) {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-    // const menuRef = useRef<HTMLDivElement>(null);
 
-    // useEffect(() => {
-    //     function handleClickOutside(event: MouseEvent) {
-    //         if (true) {
-    //             setMobileMenuOpen(false);
-    //         }
-    //     }
-
-    //     document.addEventListener("mousedown", handleClickOutside);
-    //     return () => {
-    //         document.removeEventListener("mousedown", handleClickOutside);
-    //     };
-    // }, [menuRef]);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
         <header className="bg-white">
@@ -99,7 +86,6 @@ export default function Header({ categories }: Readonly<{categories: string[]}>)
                                                         {category.charAt(0).toUpperCase() + category.slice(1)}
                                                     <span className="absolute inset-0" />
                                                 </Link>
-                                                {/* <p className="mt-1 text-gray-600">{item.description}</p> */}
                                             </div>
                                         </div>
                                     ))}
@@ -121,9 +107,13 @@ export default function Header({ categories }: Readonly<{categories: string[]}>)
                     </Link>
                 </Popover.Group>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                    <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-                        {/* Log in <span aria-hidden="true">&rarr;</span> */}
-                    </a>
+                    {/* {
+                        timer !== '00:00' && (
+                            <div className="text-xs font-semibold leading-6 text-gray-400">
+                                Actualizando en: {timer}
+                            </div>
+                        )
+                    } */}
                 </div>
             </nav>
             <Dialog 
