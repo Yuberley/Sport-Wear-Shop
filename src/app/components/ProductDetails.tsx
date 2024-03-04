@@ -7,6 +7,7 @@ import {
     usePathname,
 } from 'next/navigation';
 import Image from 'next/image';
+import { replaceSpacesWithDashes } from '../utils';
 
 const productX = {
     highlights: [
@@ -63,16 +64,13 @@ const ProductDetails = ({
 
     const pathname = usePathname();
 
-    const currentUrl = `https://ylsport.me${pathname}?name=${product.name}&id=${product.id}`;
+    const currentUrl = `https://ylsport.me${pathname}?name=${replaceSpacesWithDashes(product.name)}&id=${product.id}`;
     const phone = '573102614670';
     // const phone = '573003107055';
 
     const whatsappMessage = `Hola, me interesa el *${product.name}* \n\n_N° Ref:_  *${product.id}* \n_Precio:_  ${product.discount ? '~'+product.price+'~' + '\n_Descuento:_  ' + '*'+product.discount+'*' + '\n_Precio final:_  ' + '*'+product.newPrice+'*' : product.price} *COP* \n\n${currentUrl}`;
 
     const whatsappHref = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(whatsappMessage)}`;
-
-    // console.log('newProduct', newProduct);
-
     
     return (
         <div className="bg-white">

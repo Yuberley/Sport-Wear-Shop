@@ -1,4 +1,4 @@
-import ListProducts from "./components/ListProducts";
+import ListProducts from "@/app/components/ListProducts";
 import { Suspense } from "react";
 import { ListProductsSkeleton } from "../app/skeletons";
 import { getProductsCached } from "@/lib/GoogleSheets";
@@ -6,6 +6,8 @@ import { getColors, getSizes, getCategories } from "@/lib/GoogleSheets/lists";
 
 export default async function Home() {
 
+    getProductsCached();
+    getCategories();
     getColors();
     getSizes();
 
@@ -21,4 +23,4 @@ export default async function Home() {
             </div>
         </div>
     )
-}
+};

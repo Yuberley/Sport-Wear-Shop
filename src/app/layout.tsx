@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import Header from "./components/Header";
 import "./globals.css";
 import { getCategories } from '@/lib/GoogleSheets/lists';
-import { getProductsCached } from '@/lib/GoogleSheets';
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,8 +19,6 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
 
-    getProductsCached();
-    console.log('getProductsCached()');
     const categories = await getCategories();
 
     return (

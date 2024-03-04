@@ -19,10 +19,15 @@ export const getProductsCached = async (category?: string): Promise<Product[]> =
 
         if (cachedProducts?.length && Date.now() - lastTimeCached < timeToCache) {
             if (category) {
+
+                console.log('category cache', category);
+
                 return cachedProducts.filter(
                     (product) => product.category.toLowerCase() === category.replace(/-/g, ' ').toLowerCase()
                 );
             };
+
+            console.log('products cache', cachedProducts);
             return cachedProducts;
         }
 
@@ -59,11 +64,13 @@ export const getProductsCached = async (category?: string): Promise<Product[]> =
         lastTimeCached = Date.now();
         
         if (category) {
+            console.log('category normal', category);
             return products.filter(
                 (product) => product.category.toLowerCase() === category.toLowerCase()
             );
         };
 
+        console.log('products normal', products);
         return products;
     } catch (error) {
         console.error('Error al obtener los productos:', error);
