@@ -3,8 +3,11 @@ import { Suspense } from "react";
 import { ListProductsSkeleton } from "../app/skeletons";
 import { getProductsCached } from "@/lib/GoogleSheets";
 import { getColors, getSizes, getCategories } from "@/lib/GoogleSheets/lists";
+import { cookies } from "next/headers";
 
 export default async function Home() {
+
+    const cookieStore = cookies();
 
     getProductsCached();
     getCategories();
