@@ -76,10 +76,9 @@ const ProductDetails = ({
         <div className="bg-white">
             <div className="pt-6">
 
-                {/* Image gallery */}
                 <div 
                     className={
-                        `mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:grid-cols-${newProduct.imagesSrc.length} lg:gap-x-8 lg:px-8
+                        `mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:grid-cols-3 sm:grid-cols-2 lg:gap-x-8 lg:px-8
                         ${newProduct.imagesSrc.length === 1 && 'lg:max-w-md'}
                         ${newProduct.imagesSrc.length === 2 && 'lg:max-w-[54rem]'}
                         ${newProduct.imagesSrc.length === 3 && 'lg:max-w-7xl'}
@@ -93,7 +92,7 @@ const ProductDetails = ({
                                 key={index} 
                                 className={
                                     `aspect-h-4 aspect-w-3 overflow-hidden rounded-lg 
-                                    ${index > 0 ? 'hidden lg:block' : ''}`
+                                    ${index > 0 ? 'block' : ''}`
                                     }
                                 >
                                 <Image
@@ -104,12 +103,18 @@ const ProductDetails = ({
                                     alt={newProduct.name}
                                     className="h-full w-full object-cover object-center"
                                 />
+                                <div 
+                                    className={
+                                        `${index === 0 ? 'hidden' : 'block'} 
+                                        lg:hidden h-1 bg-gray-300 w-full mt-2`
+                                    }
+                                ></div>
                             </div>
                         ))
                     }
                 </div>
 
-                {/* newProduct info */}
+                {/* Product info */}
                 <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pb-24 lg:pt-16">
                     <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{newProduct.name}</h1>
@@ -126,7 +131,7 @@ const ProductDetails = ({
                             </div>
                             :
                             <div className="flex items-center justify-between">
-                                <p className="text-3xl tracking-tight text-gray-900">{newProduct.newPrice + ' COP'}</p>
+                                <p className="text-2xl lg:text-3xl tracking-tight text-gray-900">{newProduct.newPrice + ' COP'}</p>
                                 <div className="flex items-center ml-4 float-right">
                                     <p className="ml-3 text-1xl text-emerald-800 font-bold bg-emerald-100 rounded-md p-2">
                                         {newProduct.discount}
@@ -173,6 +178,11 @@ const ProductDetails = ({
                                                 />
                                             </RadioGroup.Option>
                                         ))}
+                                        {/* <span 
+                                            className="text-gray-900 font-medium uppercase text-sm border border-gray-200 rounded-md px-3 py-1"
+                                            >
+                                                {selectedColor.name}
+                                        </span> */}
                                     </div>
                                 </RadioGroup>
                             </div>
@@ -256,7 +266,7 @@ const ProductDetails = ({
                             </div>
                         </div>
 
-                        <div className="mt-10">
+                        {/* <div className="mt-10">
                             <h3 className="text-sm font-medium text-gray-900">Highlights</h3>
 
                             <div className="mt-4">
@@ -276,7 +286,7 @@ const ProductDetails = ({
                             <div className="mt-4 space-y-6">
                                 <p className="text-sm text-gray-600">{newProduct.details}</p>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
