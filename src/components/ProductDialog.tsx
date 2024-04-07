@@ -3,7 +3,7 @@ import { Fragment, useState } from 'react';
 import { Dialog, RadioGroup, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { StarIcon } from '@heroicons/react/20/solid';
-import { Product } from '../interfaces/products';
+import { Product } from '@/interfaces/products';
 
 // const product = {
 //   name: 'Basic Tee 6-Pack ',

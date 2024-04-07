@@ -1,10 +1,10 @@
-import ListProducts from "@/app/components/ListProducts";
+import ListProducts from "@/components/ListProducts";
 import { Suspense } from "react";
-import { ListProductsSkeleton } from "@/app/skeletons";
+import { ListProductsSkeleton } from "@/skeletons";
 import { 
     notFound,
 } from "next/navigation";
-import { capitalizeFirstLetter } from "@/app/utils";
+import { capitalizeFirstLetter } from "@/utils";
 
 export default async function Category(props: any) {
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { Product } from '../interfaces/products';
 import Link from 'next/link';
 import Image from 'next/image';
-import { replaceSpacesWithDashes } from '../utils';
+import { replaceSpacesWithDashes } from '@/utils';
 
 interface CardProductProps {
     product: Product;

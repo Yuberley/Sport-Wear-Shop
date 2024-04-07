@@ -2,7 +2,7 @@ import {
     sheets as sheetsGoogle,
     auth as authGoogle,
 } from '@googleapis/sheets';
-import { Product } from '@/app/interfaces/products';
+import { Product } from '@/interfaces/products';
 import serviceAccount from '../../../service-account.json';
 // import { products } from '@/app/data';
 

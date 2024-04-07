@@ -1,6 +1,6 @@
-import ListProducts from "@/app/components/ListProducts";
 import { Suspense } from "react";
-import { ListProductsSkeleton } from "../app/skeletons";
+import ListProducts from "@/components/ListProducts";
+import { ListProductsSkeleton } from "../skeletons";
 import { getProductsCached } from "@/lib/GoogleSheets";
 import { getColors, getSizes, getCategories } from "@/lib/GoogleSheets/lists";
 import { cookies } from "next/headers";

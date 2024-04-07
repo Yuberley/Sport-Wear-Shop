@@ -6,8 +6,8 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link';
 import Image from 'next/image';
-import { replaceSpacesWithDashes } from '../utils';
-import LogoYLSPORT from './../../../public/logo_ylsport.jpg';
+import { replaceSpacesWithDashes } from '@/utils';
+import LogoYLSPORT from './../../public/logo_ylsport.jpg';
 
 function classNames(...classes: (string | boolean | null | undefined)[]) {
     return classes.filter(Boolean).join(' ')

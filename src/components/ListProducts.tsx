@@ -1,5 +1,5 @@
-import CardProduct from "./CardProduct";
-import { Product } from "../interfaces/products";
+import CardProduct from "@/components/CardProduct";
+import { Product } from "@/interfaces/products";
 import { getProductsCached } from "@/lib/GoogleSheets";
 
 

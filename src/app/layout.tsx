@@ -1,9 +1,12 @@
 import React from 'react';
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
-import Header from "./components/Header";
+import Header from "@/components/Header";
 import "./globals.css";
 import { getCategories } from '@/lib/GoogleSheets/lists';
+import { Providers } from '@/app/providers';
+import { headers } from 'next/headers';
+
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -19,6 +22,10 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
 
+    const headersList = headers();
+    const url = new URL(headersList.get('referer') || "");
+    const pathname = url.pathname;
+    
     const categories = await getCategories();
 
     return (
@@ -29,8 +36,10 @@ export default async function RootLayout({children}: Readonly<{children: React.R
                 <link rel="icon" href="/favicon.ico" />
             </head>
             <body className={inter.className}>
-                <Header categories={categories} />
-                {children}
+                <Providers>
+                    {pathname !== "/dashboard" && <Header categories={categories} />}
+                    {children}
+                </Providers>
             </body>
         </html>
     )

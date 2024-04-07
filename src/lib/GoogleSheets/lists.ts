@@ -2,7 +2,7 @@ import {
     sheets as sheetsGoogle,
     auth as authGoogle,
 } from '@googleapis/sheets';
-import { Colors } from '../../app/interfaces/products';
+import { Colors } from '../../interfaces/products';
 import serviceAccount from '../../../service-account.json';
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];

@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { RadioGroup } from '@headlessui/react';
-import { Product, Colors } from '../interfaces/products';
+import { Product, Colors } from '@/interfaces/products';
 import {
     usePathname,
 } from 'next/navigation';
 import Image from 'next/image';
-import { replaceSpacesWithDashes } from '../utils';
+import { replaceSpacesWithDashes } from '@/utils';
 
 const productX = {
     highlights: [

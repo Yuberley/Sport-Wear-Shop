@@ -1,9 +1,8 @@
-import React from 'react'
-import ProductDetails from '../components/ProductDetails';
+import React, { Suspense } from 'react';
+import ProductDetails from '@/components/ProductDetails';
 import { getProductById } from '@/lib/GoogleSheets';
 import { getColors, getSizes } from '@/lib/GoogleSheets/lists';
-import { Suspense } from "react";
-import ProducDetailsSkeleton from "@/app/skeletons";
+import ProducDetailsSkeleton from "@/skeletons";
 
 interface PageProps {
     searchParams?: {
