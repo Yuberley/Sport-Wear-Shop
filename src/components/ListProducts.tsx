@@ -1,13 +1,44 @@
 import CardProduct from "@/components/CardProduct";
 import { Product } from "@/interfaces/products";
-import { getProductsCached } from "@/lib/GoogleSheets";
+import { supabase } from "@/lib/supabase/initSupabase";
+import { mapProductList } from "@/utils/mappers";
 
 
-export default async function ListProducts({category}: {category?: string}) {
+export default async function ListProducts({category, commigsoon}: {category?: string, commigsoon?: boolean}) {
 
-    const products = await getProductsCached(category);
+    const products: Product[] = [];
 
-    if (!products.length) {
+    if (category) {
+        const { data } = await supabase
+            .from('products')
+            .select('*')
+            .eq('category', category)
+            .eq('is_available', true)
+            .eq('is_coming_soon', false);
+
+        if (data) products.push(...mapProductList(data));
+    } 
+    
+    if (commigsoon) {
+        const { data } = await supabase
+            .from('products')
+            .select('*')
+            .eq('is_coming_soon', true);
+
+        if (data) products.push(...mapProductList(data));
+    }
+
+    if (!category && !commigsoon) {
+        const { data } = await supabase
+            .from('products')
+            .select('*')
+            .eq('is_available', true)
+            .eq('is_coming_soon', false);
+
+        if (data) products.push(...mapProductList(data));
+    };
+
+    if (!products?.length) {
         return (
             <p className="text-center mt-4 text-gray-500 text-2xl">
                 No hay productos disponibles 🥺

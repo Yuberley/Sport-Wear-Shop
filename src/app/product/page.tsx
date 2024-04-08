@@ -1,8 +1,10 @@
 import React, { Suspense } from 'react';
 import ProductDetails from '@/components/ProductDetails';
-import { getProductById } from '@/lib/GoogleSheets';
-import { getColors, getSizes } from '@/lib/GoogleSheets/lists';
 import ProducDetailsSkeleton from "@/skeletons";
+import { Product } from '@/interfaces/products';
+import { supabase } from '@/lib/supabase/initSupabase';
+import { mapProduct } from '@/utils/mappers';
+import { color } from '@/interfaces';
 
 interface PageProps {
     searchParams?: {
@@ -26,14 +28,52 @@ export default async function Page({ searchParams }: PageProps) {
         return productNotFound;
     };
 
-    const product = await getProductById(id);
+    let product: Product;
+
+    let { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error) {
+        console.error('Error fetching product', error);
+        return productNotFound;
+    }
+
+    product = mapProduct(data);
 
     if (!product) {
         return productNotFound;
     };
 
-    const colorsSource = await getColors();
-    const sizesSource = await getSizes();
+    let colorsSource: color[] = [];
+    let sizesSource: string[] = [];
+
+    const { data: colorsData, error: colorsError } = await supabase
+        .from('types_colors')
+        .select('*');
+
+        
+    if (colorsError) {
+        console.error('Error fetching colors', colorsError);
+    }
+    
+    if (colorsData) {
+        colorsSource = colorsData;
+    }
+    
+    const { data: sizesData, error: sizesError } = await supabase
+        .from('types_sizes')
+        .select('value');
+    
+    if (sizesError) {
+        console.error('Error fetching sizes', sizesError);
+    }
+    
+    if (sizesData) {
+        sizesSource = sizesData.map((size: any) => size.value);
+    }
 
     return (
         // <ProducDetailsSkeleton />

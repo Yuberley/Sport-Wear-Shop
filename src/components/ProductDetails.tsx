@@ -2,23 +2,14 @@
 
 import { useState } from 'react';
 import { RadioGroup } from '@headlessui/react';
-import { Product, Colors } from '@/interfaces/products';
+import { Product } from '@/interfaces/products';
+import { color } from '@/interfaces';
 import {
     usePathname,
 } from 'next/navigation';
 import Image from 'next/image';
 import { replaceSpacesWithDashes } from '@/utils';
 
-const productX = {
-    highlights: [
-        'Hand cut and sewn locally',
-        'Dyed with our proprietary colors',
-        'Pre-washed & pre-shrunk',
-        'Ultra-soft 100% cotton',
-    ],
-    details:
-        'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
-}
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
@@ -30,15 +21,15 @@ const ProductDetails = ({
     sizesSource 
 }: { 
     product: Product, 
-    colorsSource: Colors[], 
+    colorsSource: color[], 
     sizesSource: string[] 
 }) => {
 
     const colorsAvailable = colorsSource
-		.filter((color) => product.colors.includes(color.color))
+		.filter((color) => product.colors.includes(color.name))
 		.map((color) => {
 			return {
-				name: color.color,
+				name: color.name,
                 class: color.value, // hexadecimal color
 				selectedClass: 'ring-gray-500',
 			};
@@ -55,8 +46,8 @@ const ProductDetails = ({
         ...product,
         colors: colorsAvailable,
         sizes: sizesAvailable,
-        highlights: productX.highlights,
-        details: productX.details
+        // highlights: productX.highlights,
+        // details: productX.details
     }
     
     const [selectedColor, setSelectedColor] = useState(newProduct.colors[0])
@@ -71,27 +62,20 @@ const ProductDetails = ({
     const whatsappMessage = `Hola, me interesa el *${product.name}* \n\n_N° Ref:_  *${product.id}* \n_Precio:_  ${product.discount ? '~'+product.price+'~' + '\n_Descuento:_  ' + '*'+product.discount+'*' + '\n_Precio final:_  ' + '*'+product.newPrice+'*' : product.price} *COP* \n\n${currentUrl}`;
 
     const whatsappHref = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(whatsappMessage)}`;
-    
+
     return (
         <div className="bg-white">
             <div className="pt-6">
 
                 <div 
-                    className={
-                        `mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:grid-cols-3 sm:grid-cols-2 lg:gap-x-8 lg:px-8
-                        ${newProduct.imagesSrc.length === 1 && 'lg:max-w-md'}
-                        ${newProduct.imagesSrc.length === 2 && 'lg:max-w-[54rem]'}
-                        ${newProduct.imagesSrc.length === 3 && 'lg:max-w-7xl'}
-                        `
-                    }
+                    className='mx-auto sm:px-6 lg:grid lg:grid-cols-3 sm:grid-cols-2 lg:gap-x-8 lg:px-8 lg:max-w-7xl lg:gap-y-8 lg:pt-8 lg:pb-2'
                 >
-
                     {
                         newProduct.imagesSrc.map((image, index) => (
                             <div 
                                 key={index} 
                                 className={
-                                    `aspect-h-4 aspect-w-3 overflow-hidden rounded-lg 
+                                    `aspect-h-4 aspect-w-3 overflow-hidden lg:rounded-lg 
                                     ${index > 0 ? 'block' : ''}`
                                     }
                                 >
@@ -101,14 +85,8 @@ const ProductDetails = ({
                                     height={1000}
                                     src={image.trim()}
                                     alt={newProduct.name}
-                                    className="h-full w-full object-cover object-center"
+                                    className="h-full w-full object-cover object-center mt-1.5 lg:mt-0"
                                 />
-                                <div 
-                                    className={
-                                        `${index === 0 ? 'hidden' : 'block'} 
-                                        lg:hidden h-1 bg-gray-300 w-full mt-2`
-                                    }
-                                ></div>
                             </div>
                         ))
                     }
@@ -127,16 +105,16 @@ const ProductDetails = ({
                         {
                             !newProduct.discount ?
                             <div className="flex items-center">
-                                <p className="text-3xl tracking-tight text-gray-900">{newProduct.price + ' COP'}</p>
+                                <p className="text-3xl tracking-tight text-gray-900">{'$' + newProduct.price + ' COP'}</p>
                             </div>
                             :
                             <div className="flex items-center justify-between">
-                                <p className="text-2xl lg:text-3xl tracking-tight text-gray-900">{newProduct.newPrice + ' COP'}</p>
+                                <p className="text-2xl lg:text-3xl tracking-tight text-gray-900">{'$' + newProduct.newPrice + ' COP'}</p>
                                 <div className="flex items-center ml-4 float-right">
                                     <p className="ml-3 text-1xl text-emerald-800 font-bold bg-emerald-100 rounded-md p-2">
-                                        {newProduct.discount}
+                                        {newProduct.discount + '%'}
                                     </p>
-                                    <p className="ml-3 text-1xl text-gray-500 line-through">{newProduct.price}</p>
+                                    <p className="ml-3 text-1xl text-gray-500 line-through">{'$' + newProduct.price}</p>
                                 </div>
                             </div>
                         }
@@ -149,7 +127,7 @@ const ProductDetails = ({
                                 <RadioGroup value={selectedColor} onChange={setSelectedColor}
                                 className="mt-4">
                                     <RadioGroup.Label className="sr-only">Elige un color</RadioGroup.Label>
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center space-y-1 flex-wrap">
                                         {newProduct.colors.map((color) => (
                                             <RadioGroup.Option
                                                 key={color.name}
@@ -162,7 +140,7 @@ const ProductDetails = ({
                                                         color.selectedClass,
                                                         active && checked ? 'ring ring-offset-1' : '',
                                                         !active && checked ? 'ring-2' : '',
-                                                        'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none'
+                                                        'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none mx-1'
                                                     )
                                                 }
                                             >
@@ -178,11 +156,6 @@ const ProductDetails = ({
                                                 />
                                             </RadioGroup.Option>
                                         ))}
-                                        {/* <span 
-                                            className="text-gray-900 font-medium uppercase text-sm border border-gray-200 rounded-md px-3 py-1"
-                                            >
-                                                {selectedColor.name}
-                                        </span> */}
                                     </div>
                                 </RadioGroup>
                             </div>
@@ -246,13 +219,23 @@ const ProductDetails = ({
                                 </RadioGroup>
                             </div>
 
-                            <a
-                                target="_blank"
-                                href={whatsappHref}
-                                className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                            >
-                                Pedir por WhatsApp 🤗
-                            </a>
+                            {
+                                product.isComingSoon ?
+                                <button
+                                    disabled
+                                    className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-gray-300 px-8 py-3 text-base font-medium text-white hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                                >
+                                    Próximamente disponible
+                                </button>
+                                : 
+                                <a
+                                    target="_blank"
+                                    href={whatsappHref}
+                                    className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                                >
+                                    Pedir por WhatsApp 🤗
+                                </a>
+                            }
                         </form>
                     </div>
 

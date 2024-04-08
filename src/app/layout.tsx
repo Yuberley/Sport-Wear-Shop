@@ -1,17 +1,16 @@
+'use client'
+
 import React from 'react';
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import "./globals.css";
-import { getCategories } from '@/lib/GoogleSheets/lists';
 import { Providers } from '@/app/providers';
-import { headers } from 'next/headers';
-
-
+import { usePathname } from 'next/navigation'
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
     title: "YL SPORT | Tu tienda de ropa deportiva",
     description: "Tienda de ropa deportiva con los mejores precios y estilos",
     applicationName: "YL SPORT",
@@ -20,13 +19,9 @@ export const metadata: Metadata = {
     creator: "Yudilexy Guerrero",
 };
 
-export default async function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
+export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
 
-    const headersList = headers();
-    const url = new URL(headersList.get('referer') || "");
-    const pathname = url.pathname;
-    
-    const categories = await getCategories();
+    const pathname = usePathname();
 
     return (
         <html lang="es">
@@ -37,7 +32,7 @@ export default async function RootLayout({children}: Readonly<{children: React.R
             </head>
             <body className={inter.className}>
                 <Providers>
-                    {pathname !== "/dashboard" && <Header categories={categories} />}
+                    {pathname !== "/dashboard" && <Header />}
                     {children}
                 </Providers>
             </body>

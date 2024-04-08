@@ -1,166 +1,25 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
 import { Select, SelectItem } from '@nextui-org/select';
-import { Checkbox } from '@nextui-org/checkbox';
-import { Radio } from '@nextui-org/radio';
 import { Card, CardFooter, Textarea  } from '@nextui-org/react';
 import { Switch } from '@nextui-org/switch';
-import { Modal } from '@nextui-org/modal';
-import { Progress } from '@nextui-org/progress';
 import { Spinner } from '@nextui-org/spinner';
-import { Tooltip } from '@nextui-org/tooltip';
-import { Badge } from '@nextui-org/badge';
 import { Image } from "@nextui-org/react";
+import { supabase } from '@/lib/supabase/initSupabase';
+import { SUPABASE_URL } from '@/environment';
+import { category, color, size } from '@/interfaces';
+import { Product } from '@/interfaces/products';
 
-
-export interface Product {
-	id: string; // ya
-	name: string; // ya
-	description: string;
-	price: string; // ya
-	discount: string; // ya
-	newPrice: string; // ya
-	colors: string[]; // ya
-	sizes: string[]; // ya
-	category: string; // ya
-	imagesSrc: string[]; // ya
-	isAvailable: boolean; // ya
-    isComingSoon: boolean; // ya
- }
 
 export interface ListProducts {
 	products: Product[];
 }
 
-export interface Colors {
-	color: string;
-	value: string;
-}
+const Page = () => {
 
-const categories = [
-    {
-        id: '1',
-        name: 'Category 1',
-    },
-    {
-        id: '2',
-        name: 'Category 2',
-    },
-    {
-        id: '3',
-        name: 'Category 3',
-    },
-    {
-        id: '4',
-        name: 'Category 4',
-    },
-    {
-        id: '5',
-        name: 'Category 5',
-    },
-];
-
-const colors = [
-    {
-        color: 'red',
-        value: '#ff0000',
-    },
-    {
-        color: 'blue',
-        value: '#0000ff',
-    },
-    {
-        color: 'green',
-        value: '#00ff00',
-    },
-    {
-        color: 'yellow',
-        value: '#ffff00',
-    },
-    {
-        color: 'black',
-        value: '#000000',
-    },
-    {
-        color: 'white',
-        value: '#ffffff',
-    },
-    {
-        color: 'purple',
-        value: '#800080',
-    },
-    {
-        color: 'orange',
-        value: '#ffa500',
-    },
-    {
-        color: 'pink',
-        value: '#ffc0cb',
-    },
-    {
-        color: 'brown',
-        value: '#a52a2a',
-    },
-    {
-        color: 'grey',
-        value: '#808080',
-    },
-    {
-        color: 'cyan',
-        value: '#00ffff',
-    },
-    {
-        color: 'magenta',
-        value: '#ff00ff',
-    },
-    {
-        color: 'silver',
-        value: '#c0c0c0',
-    },
-    {
-        color: 'gold',
-        value: '#ffd700',
-    },
-    {
-        color: 'lime',
-        value: '#00ff00',
-    },
-    {
-        color: 'maroon',
-        value: '#800000',
-    },
-    {
-        color: 'navy',
-        value: '#000080',
-    },
-    {
-        color: 'olive',
-        value: '#808000',
-    },
-    {
-        color: 'teal',
-        value: '#008080',
-    },
-];
-
-const sizes = [
-    'XS',
-    'S',
-    'M',
-    'L',
-    'XL',
-    'XXL',
-    'XXXL',
-    'XXXXL',
-    'XXXXXL',
-];
-
-const page = () => {
-
-
-    const [product, setProduct] = React.useState<Product>({
+    const [product, setProduct] = useState<Product>({
         id: '',
         name: '',
         description: '',
@@ -170,28 +29,108 @@ const page = () => {
         colors: [],
         sizes: [],
         category: '',
-        imagesSrc: [
-            "https://keepcoding.io/wp-content/uploads/2023/08/image-200.png",
-            "https://keepcoding.io/wp-content/uploads/2023/08/image-200.png",
-            "https://keepcoding.io/wp-content/uploads/2023/08/image-200.png",
-            "https://keepcoding.io/wp-content/uploads/2023/08/image-200.png",
-            "https://keepcoding.io/wp-content/uploads/2023/08/image-200.png",
-            "https://keepcoding.io/wp-content/uploads/2023/08/image-200.png",
-            "https://keepcoding.io/wp-content/uploads/2023/08/image-200.png"
-        ],
+        imagesSrc: [],
         isAvailable: true,
         isComingSoon: false,
+        createdAt: '',
     });
 
-    console.log(product);
+    const [loadingSaveProduct, setLoadingSaveProduct] = useState<boolean>(false);
+    const [loadingUploadImages, setLoadingUploadImages] = useState<boolean>(false);
+    const [categories, setCategories] = useState<category[]>([]);
+    const [colors, setColors] = useState<color[]>([]);
+    const [sizes, setSizes] = useState<size[]>([]);
 
-    const [uploadedImages, setUploadedImages] = React.useState<FileList | null>(null);
 
-    const handleProductChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const getCategories = async () => {
+        let { data: types_categories, error } = await supabase
+        .from('types_categories')
+        .select('*')
+
+        if (error) {
+            console.error('Error getting categories: ', error.message);
+            return;
+        }
+
+        setCategories(types_categories as category[]);
+    }
+
+    const getColors = async () => {
+        let { data: types_colors, error } = await supabase
+        .from('types_colors')
+        .select('*')
+
+        if (error) {
+            console.error('Error getting colors: ', error.message);
+            return;
+        }
+
+        setColors(types_colors as color[]);
+    }
+
+    const getSizes = async () => {
+        let { data: types_sizes, error } = await supabase
+        .from('types_sizes')
+        .select('*')
+
+        if (error) {
+            console.error('Error getting sizes: ', error.message);
+            return;
+        }
+
+        setSizes(types_sizes as size[]);
+    }
+
+    useEffect( () => {
+        getCategories();
+        getColors();
+        getSizes();
+    }, []);
+        
+
+    const saveProduct = async () => {
+        setLoadingSaveProduct(true);
+        const { data, error } = await supabase
+        .from('products')
+        .insert([
+            {
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                discount: product.discount || null,
+                new_price: product.newPrice || null,
+                colors: product.colors,
+                sizes: product.sizes,
+                category: product.category,
+                source_image: product.imagesSrc,
+                is_available: product.isAvailable,
+                is_coming_soon: product.isComingSoon,
+            }
+        ])
+
+        if (error) {
+            setLoadingSaveProduct(false);
+            console.error('Error inserting product: ', error.message);
+            return;
+        }
+
         setProduct({
-            ...product,
-            [e.target.name]: e.target.value,
+            id: '',
+            name: '',
+            description: '',
+            price: '',
+            discount: '',
+            newPrice: '',
+            colors: [],
+            sizes: [],
+            category: '',
+            imagesSrc: [],
+            isAvailable: true,
+            isComingSoon: false,
+            createdAt: '',
         });
+
+        setLoadingSaveProduct(false);
     }
 
     const calculateNewPrice = () => {
@@ -210,6 +149,80 @@ const page = () => {
         calculateNewPrice();
     }, [product.price, product.discount]);
 
+    const uploadImagesStorage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        setLoadingUploadImages(true);
+
+        if (!event.target.files) return;
+
+        // maximo 2 MB por imagen
+        const maxSize = 2 * 1024 * 1024;
+
+        for (let i = 0; i < event.target.files.length; i++) {
+            const file = event.target.files[i];
+            if (file.size > maxSize) {
+                alert('El tamaño de la imagen debe ser inferior a 2MB');
+                setLoadingUploadImages(false);
+                return;
+            }
+        }
+
+        const files = event.target.files as FileList;
+
+        const sourceImageFinal: string[] = [];
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fullName = file.name;
+            const extension = fullName.split('.').pop();
+            const fileName = 'img_' + new Date().getTime() + '.' + extension;
+
+            const fileImage = event.target.files[i];
+
+            const { data, error } = await supabase
+            .storage
+            .from('images')
+            .upload(fileName, fileImage, {
+                cacheControl: '3600',
+                upsert: false
+            })
+
+            if (error) {
+                console.error('Error uploading file: ', error.message);
+                return;
+            }
+
+            const storateUrl = '/storage/v1/object/public/images/';
+            const urlImage = SUPABASE_URL + storateUrl + data.path;
+
+            sourceImageFinal.push(urlImage)
+        }
+
+        setProduct({
+            ...product,
+            imagesSrc: [...product.imagesSrc, ...sourceImageFinal],
+        });
+
+        setLoadingUploadImages(false);
+
+    }
+
+    const deleteImageStorage = async (url: string) => {
+        const urlImage = url.split('/').pop() as string;
+
+        const { data, error } = await supabase.storage.from('images').remove([urlImage])
+    
+        if (error) {
+            console.error('Error deleting file: ', error.message);
+            return;
+        }
+
+        const newImagesSrc = product.imagesSrc.filter((imageSrc) => imageSrc !== url);
+        setProduct({
+            ...product,
+            imagesSrc: newImagesSrc,
+        });
+    }
 
 	return (
 		<>
@@ -227,6 +240,7 @@ const page = () => {
 					<div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
 						<div className="flex w-full flex-wrap md:flex-nowrap gap-4">
 							<Input
+                                required
 								type="text"
 								label="Name"
 								placeholder="Enter the product name"
@@ -239,6 +253,7 @@ const page = () => {
                                 }
 							/>
 							<Input
+                                required
 								type="number"
 								color="success"
 								label="Price"
@@ -288,7 +303,7 @@ const page = () => {
                                 label="New Price"
                                 disabled
                                 placeholder="0.00"
-                                value={product.newPrice}
+                                value={product.discount ? product.newPrice : ''}
                                 startContent={
                                     <div className="pointer-events-none flex items-center">
                                         <span className="text-default-400 text-small">
@@ -303,7 +318,9 @@ const page = () => {
                     <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             <Select
+                                required
                                 label="Category"
+                                value={product.category}
                                 placeholder="Select a category"
                                 onChange={(e) => setProduct({
                                     ...product,
@@ -312,7 +329,7 @@ const page = () => {
                             >
                                 {
                                     categories.map((category) => (
-                                        <SelectItem key={category.id} value={category.id}>
+                                        <SelectItem key={category.name} value={category.name}>
                                             {category.name}
                                         </SelectItem>
                                     ))
@@ -321,6 +338,7 @@ const page = () => {
                             <Select
                                 label="Colors"
                                 placeholder="Select colors"
+                                value={product.colors.join(',') || ''}
                                 selectionMode="multiple"
                                 onChange={(e) => {
                                     const colors = Array.from(e.target.value.split(','));
@@ -333,14 +351,14 @@ const page = () => {
                                 {
                                     colors.map((color) => (
                                         <SelectItem 
-                                            key={color.color} 
-                                            value={color.color}
+                                            key={color.name} 
+                                            value={color.name}
                                             style={{
                                                 background: `linear-gradient(to right, #ffffff 30%, ${color.value} 60%, #ffffff 80%)`,
                                                 backgroundColor: color.value 
                                             }}                          
                                             >
-                                            {color.color}
+                                            {color.name}
                                         </SelectItem>
                                     ))
                                 }
@@ -353,6 +371,7 @@ const page = () => {
                             <Select
                                 label="Sizes"
                                 placeholder="Select sizes"
+                                value={product.sizes.join(',') || ''}
                                 selectionMode="multiple"
                                 onChange={(e) => {
                                     const sizes = Array.from(e.target.value.split(','));
@@ -364,8 +383,8 @@ const page = () => {
                             >
                                 {
                                     sizes.map((size) => (
-                                        <SelectItem key={size} value={size}>
-                                            {size}
+                                        <SelectItem key={size.value} value={size.value}>
+                                            {size.value}
                                         </SelectItem>
                                     ))
                                 }
@@ -374,20 +393,28 @@ const page = () => {
                                 <Switch
                                     defaultSelected={product.isAvailable}
                                     checked={product.isAvailable}
-                                    onChange={() => setProduct({
-                                        ...product,
-                                        isAvailable: !product.isAvailable,
-                                    })}
+                                    isSelected={product.isAvailable}
+                                    onValueChange={(value) => {
+                                        setProduct({
+                                            ...product,
+                                            isAvailable: value,
+                                            isComingSoon: false,
+                                        });
+                                    }}
                                 >
                                     Available
                                 </Switch>
                                 <Switch
                                     defaultSelected={product.isComingSoon}
                                     checked={product.isComingSoon}
-                                    onChange={() => setProduct({
-                                        ...product,
-                                        isComingSoon: !product.isComingSoon,
-                                    })}
+                                    isSelected={product.isComingSoon}
+                                    onValueChange={(value) => {
+                                        setProduct({
+                                            ...product,
+                                            isAvailable: false,
+                                            isComingSoon: value,
+                                        });
+                                    }}
                                 >
                                     Coming Soon
                                 </Switch>
@@ -412,19 +439,34 @@ const page = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
+                    <div className="flex flex-col gap-1 md:flex-row md:flex-wrap">
+                        <label className="text-default-400 text-small ms-2">
+                            Images (máximo. 2MB)
+                        </label>
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                            <Input
+                            {
+                                loadingUploadImages &&
+                                <Spinner size="sm" color="success" />
+                            }
+                            <input
                                 type="file"
-                                label="Images"
+                                placeholder="Select images"
+                                accept="image/*"
+                                color='success'
                                 multiple
+                                max={5}
                                 onChange={(e) => {
-                                    setUploadedImages(e.target.files);
-                                    const imagesSrc = Array.from(e.target.files as FileList).map((file) => URL.createObjectURL(file));
-                                    setProduct({
-                                        ...product,
-                                        imagesSrc: imagesSrc,
-                                    });
+                                    uploadImagesStorage(e);
+                                }}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    padding: '0.5rem',
+                                    borderRadius: '0.5rem',
+                                    backgroundColor: '#f9f9f9',
+                                    border: '1px solid #f9f9f9',
+                                    cursor: 'pointer',
+                                    width: '100%',
                                 }}
                             />
                         </div>
@@ -460,11 +502,7 @@ const page = () => {
                                                         radius="lg" 
                                                         size="sm"
                                                         onClick={() => {
-                                                            const newImagesSrc = product.imagesSrc.filter((_, i) => i !== index);
-                                                            setProduct({
-                                                                ...product,
-                                                                imagesSrc: newImagesSrc,
-                                                            });
+                                                            deleteImageStorage(imageSrc);
                                                         }}
                                                     >
                                                         Remove
@@ -478,17 +516,30 @@ const page = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
+                    <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap mb-10">
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             <Button
                                 type="submit"
-                                color="primary"
+                                color={
+                                    !product.name ||
+                                    !product.price ||
+                                    !product.category ||
+                                    !product.colors.length ||
+                                    !product.sizes.length ||
+                                    !product.description ||
+                                    !product.imagesSrc.length ?
+                                        'default' 
+                                    :
+                                        'primary'
+                                }
                                 className="w-full"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    saveProduct();
+                                }}
                                 disabled={
                                     !product.name ||
                                     !product.price ||
-                                    !product.discount ||
-                                    !product.newPrice ||
                                     !product.category ||
                                     !product.colors.length ||
                                     !product.sizes.length ||
@@ -497,6 +548,11 @@ const page = () => {
                                 }
                             >
                                 Save
+
+                                {
+                                    loadingSaveProduct &&
+                                    <Spinner size="sm" color="white" />
+                                }
                             </Button>
                         </div>
                     </div>
@@ -506,4 +562,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default Page;

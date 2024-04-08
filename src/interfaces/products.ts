@@ -10,13 +10,10 @@ export interface Product {
     category: string;
     imagesSrc: string[];
     isAvailable: boolean;
+    isComingSoon: boolean;
+    createdAt: string;
 };
 
 export interface ListProducts {
     products: Product[];
-};
-
-export interface Colors {
-    color: string;
-    value: string;
 };

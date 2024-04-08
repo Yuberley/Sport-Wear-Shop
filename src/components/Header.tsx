@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Fragment } from 'react'
 import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
@@ -8,12 +8,34 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { replaceSpacesWithDashes } from '@/utils';
 import LogoYLSPORT from './../../public/logo_ylsport.jpg';
+import { category } from '@/interfaces';
+import { supabase } from '@/lib/supabase/initSupabase';
 
 function classNames(...classes: (string | boolean | null | undefined)[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Header({ categories }: Readonly<{categories: string[]}>) {
+export default function Header() {
+
+    const [categories, setCategories] = useState<category[]>([])
+
+    const getCategories = async () => {
+        const { data, error } = await supabase
+            .from('types_categories')
+            .select('*');
+            
+        if (error) {
+            console.error('Error fetching categories', error);
+        }
+        
+        if (data) {
+            setCategories(data);
+        }
+    }
+
+    useEffect(() => {
+        getCategories();
+    }, []);
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -38,7 +60,7 @@ export default function Header({ categories }: Readonly<{categories: string[]}>)
                         className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
                         onClick={() => setMobileMenuOpen(true)}
                     >
-                        <span className="sr-only">Open main menu</span>
+                        <span className="sr-only">Abrir menú principal</span>
                         <Bars3Icon className="h-6 w-6" aria-hidden="true" />
                     </button>
                 </div>
@@ -69,9 +91,10 @@ export default function Header({ categories }: Readonly<{categories: string[]}>)
                                 <div className="p-4">
                                     {categories.map((category) => (
                                         <div
-                                            key={category}
+                                            key={category.id}
                                             className="group relative flex items-center gap-x-6 rounded-lg p-3 text-sm leading-6 hover:bg-gray-50"
                                         >
+                                            
                                             <div className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#9ca3a9" className="w-5 h-5">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -79,11 +102,11 @@ export default function Header({ categories }: Readonly<{categories: string[]}>)
                                             </div>
                                             <div className="flex-auto">
                                                 <Link 
-                                                        href={'/categories/' + replaceSpacesWithDashes(category)}
+                                                        href={'/categories/' + replaceSpacesWithDashes(category.name)}
                                                         onClick={() => setMobileMenuOpen(false)}
                                                         className="block font-semibold text-gray-900"
                                                     >
-                                                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                                                        {category.name.charAt(0).toUpperCase() + category.name.slice(1)}
                                                     <span className="absolute inset-0" />
                                                 </Link>
                                             </div>
@@ -160,12 +183,12 @@ export default function Header({ categories }: Readonly<{categories: string[]}>)
                                             <Disclosure.Panel className="mt-2 space-y-2">
                                                 {categories.map((category) => (
                                                     <Link
-                                                        key={category}
-                                                        href={'/categories/' + replaceSpacesWithDashes(category)}
+                                                        key={category.id}
+                                                        href={'/categories/' + replaceSpacesWithDashes(category.name)}
                                                         className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                                         onClick={() => setMobileMenuOpen(false)}
                                                     >
-                                                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                                                        {category.name.charAt(0).toUpperCase() + category.name.slice(1)}
                                                     </Link>
                                                 ))}
                                             </Disclosure.Panel>

@@ -1,18 +1,23 @@
 import { Suspense } from "react";
 import ListProducts from "@/components/ListProducts";
 import { ListProductsSkeleton } from "../skeletons";
-import { getProductsCached } from "@/lib/GoogleSheets";
-import { getColors, getSizes, getCategories } from "@/lib/GoogleSheets/lists";
 import { cookies } from "next/headers";
+
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "YL SPORT | Tu tienda de ropa deportiva",
+    description: "Tienda de ropa deportiva con los mejores precios y estilos",
+    applicationName: "YL SPORT",
+    generator: "YL SPORT",
+    keywords: ["Ropa deportiva", "Ropa", "Deportiva", "YL SPORT", "Gym", "Gimnasio", "Ejercicio", "Entrenamiento", "Fitness", "Moda", "Moda deportiva", "Moda fitness", "Moda gym"],
+    creator: "Yudilexy Guerrero",
+};
+
 
 export default async function Home() {
 
     const cookieStore = cookies();
-
-    getProductsCached();
-    getCategories();
-    getColors();
-    getSizes();
 
     return (
         <div className="bg-white">
