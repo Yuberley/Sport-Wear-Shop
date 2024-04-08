@@ -5,6 +5,7 @@ import { Product } from '@/interfaces/products';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { mapProduct } from '@/utils/mappers';
 import { color } from '@/interfaces';
+import { cookies } from "next/headers";
 
 interface PageProps {
     searchParams?: {
@@ -20,6 +21,8 @@ const productNotFound = (
 );
 
 export default async function Page({ searchParams }: PageProps) {
+
+    const cookieStore = cookies();
 
     const id = searchParams?.id?.toString() || '';
     const name = searchParams?.name?.toString() || '';

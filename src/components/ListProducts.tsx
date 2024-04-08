@@ -41,7 +41,7 @@ export default async function ListProducts({category, commigsoon}: {category?: s
     if (!products?.length) {
         return (
             <p className="text-center mt-4 text-gray-500 text-2xl">
-                No hay productos disponibles 🥺
+                No hay productos para mostrar 🥺
             </p>
         );
     };

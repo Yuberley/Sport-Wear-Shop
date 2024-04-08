@@ -1,16 +1,13 @@
-'use client'
-
 import React from 'react';
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
-import Header from "@/components/Header";
 import "./globals.css";
 import { Providers } from '@/app/providers';
-import { usePathname } from 'next/navigation'
+
 
 const inter = Inter({ subsets: ["latin"] });
 
-const metadata: Metadata = {
+export const metadata: Metadata = {
     title: "YL SPORT | Tu tienda de ropa deportiva",
     description: "Tienda de ropa deportiva con los mejores precios y estilos",
     applicationName: "YL SPORT",
@@ -21,8 +18,6 @@ const metadata: Metadata = {
 
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
 
-    const pathname = usePathname();
-
     return (
         <html lang="es">
             <head>
@@ -32,7 +27,6 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
             </head>
             <body className={inter.className}>
                 <Providers>
-                    {pathname !== "/dashboard" && <Header />}
                     {children}
                 </Providers>
             </body>
