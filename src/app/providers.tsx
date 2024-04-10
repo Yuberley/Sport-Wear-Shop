@@ -11,7 +11,7 @@ export function Providers({children}: { children: React.ReactNode }) {
 
     return (
         <NextUIProvider>
-            {pathname !== "/dashboard" && <Header />}
+            {(pathname !== "/dashboard" && pathname !== "/login") && <Header />}
             {children}
         </NextUIProvider>
     )
