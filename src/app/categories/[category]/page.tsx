@@ -5,8 +5,11 @@ import {
     notFound,
 } from "next/navigation";
 import { capitalizeFirstLetter } from "@/utils";
+import { cookies } from "next/headers";
 
 export default async function Category(props: any) {
+
+    const cookieStore = cookies();
 
     let { category } = props.params;
     let categoryTitle = '';
