@@ -25,7 +25,7 @@ const CardProduct = ({ product }: CardProductProps) => {
                 {product.discount && (
                     <div className="absolute top-0 right-0 bg-green-500 text-white font-bold px-2 py-1 rounded-bl-md border-b-2 border-green-600 rounded-tr-md
                     z-10 transform -translate-x-0 -translate-y-0 rotate-0 group-hover:opacity-75 group-hover:translate-x-2 group-hover:right-3 transition-all duration-300 ease-in-out group-hover:scale-110 hover:rotate-0">
-                        {product.discount}
+                        {product.discount + '%'}
                     </div>
                 )}
                 <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80 ">
@@ -48,11 +48,12 @@ const CardProduct = ({ product }: CardProductProps) => {
                             <p className="text-sm font-medium text-gray-900">
                                 {product.discount ? 
                                     <div className="flex flex-col">
-                                        <span className=" text-green-600 font-bold">{product.newPrice + ' COP'}</span>
-                                        <span className="line-through text-gray-400 font-normal text-[12px] flex justify-end mb-[-4px]">{product.price + ' COP'}</span>
+                                        <span className=" text-green-600 font-bold">{
+                                        parseInt(product.newPrice).toLocaleString() + ' COP'}</span>
+                                        <span className="line-through text-gray-400 font-normal text-[12px] flex justify-end mb-[-4px]">{parseInt(product.price).toLocaleString() + ' COP'}</span>
                                     </div>
                                     : 
-                                    <span className="text-gray-600 font-semibold">{product.price + ' COP'}</span>
+                                    <span className="text-gray-600 font-semibold">{parseInt(product.price).toLocaleString() + ' COP'}</span>
                                 }
                             </p>
                         </div>

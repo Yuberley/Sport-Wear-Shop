@@ -94,8 +94,8 @@ const Page = () => {
         .from('products')
         .insert([
             {
-                name: product.name,
-                description: product.description,
+                name: product.name.trim(),
+                description: product.description.trim(),
                 price: product.price,
                 discount: product.discount || null,
                 new_price: product.newPrice || null,

@@ -16,10 +16,8 @@ export default async function Category(props: any) {
     let categorySlug = '';
 
     if (category) {
-
         categoryTitle = capitalizeFirstLetter(category.charAt(0).toUpperCase() + category.slice(1));
         categorySlug = category.split('-').join(' ');
-        
     }
 
     if (!category) {
