@@ -245,7 +245,7 @@ const ProductDetails = ({
                             <h3 className="sr-only">Description</h3>
 
                             <div className="space-y-6">
-                                <p className="text-base text-gray-900">{newProduct.description}</p>
+                                <p className="text-base text-gray-900" style={{ whiteSpace: 'pre-wrap' }}>{newProduct.description}</p>
                             </div>
                         </div>
 
