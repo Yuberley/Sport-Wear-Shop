@@ -37,6 +37,7 @@ const Page = () => {
 
     const [loadingSaveProduct, setLoadingSaveProduct] = useState<boolean>(false);
     const [loadingUploadImages, setLoadingUploadImages] = useState<boolean>(false);
+    const [images, setImages] = useState<FileList>();
     const [categories, setCategories] = useState<category[]>([]);
     const [colors, setColors] = useState<color[]>([]);
     const [sizes, setSizes] = useState<size[]>([]);
@@ -98,7 +99,7 @@ const Page = () => {
                 description: product.description.trim(),
                 price: product.price,
                 discount: product.discount || null,
-                new_price: product.newPrice || null,
+                // new_price: product.newPrice || null,
                 colors: product.colors,
                 sizes: product.sizes,
                 category: product.category,
@@ -134,6 +135,20 @@ const Page = () => {
     }
 
     const calculateNewPrice = () => {
+
+        if (product.discount === '0'){
+
+            console.log('entro aca');
+
+            setProduct({
+                ...product,
+                discount: '',
+                newPrice: '',
+            });
+
+            return;
+        }
+
         if (product.price && product.discount) {
             const price = parseFloat(product.price);
             const discount = parseFloat(product.discount);
@@ -144,6 +159,8 @@ const Page = () => {
             });
         }
     }
+
+    // console.log('product: ', product);
 
     useEffect(() => {
         calculateNewPrice();
@@ -252,11 +269,38 @@ const Page = () => {
                                     })
                                 }
 							/>
-							<Input
+                            <Select
+                                required
+                                label="Category"
+                                value={product.category}
+                                placeholder="Select a category"
+                                onChange={(e) => setProduct({
+                                    ...product,
+                                    category: e.target.value,
+                                })}
+                            >
+                                {
+                                    categories.map((category) => (
+                                        <SelectItem key={category.name} value={category.name}>
+                                            {category.name}
+                                        </SelectItem>
+                                    ))
+                                }
+                            </Select>
+                            
+							
+
+						</div>
+					</div>
+
+                    <div className="flex flex-col grid-cols-3 gap-4 md:gap-8 md:flex-row md:flex-wrap">
+                        <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                        <Input
                                 required
 								type="number"
 								color="success"
 								label="Price"
+                                min={0}
                                 value={product.price}
                                 onChange={
                                     (e) => setProduct({
@@ -273,15 +317,12 @@ const Page = () => {
 									</div>
 								}
 							/>
-						</div>
-					</div>
-
-                    <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
-                        <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             <Input
                                 type="number"
-                                color="warning"
+                                color="success"
                                 label="Discount"
+                                max={100}
+                                min={0}
                                 value={product.discount}
                                 onChange={
                                     (e) => setProduct({
@@ -289,6 +330,19 @@ const Page = () => {
                                         discount: e.target.value,
                                     })
                                 }
+                                endContent={
+                                    <div className="pointer-events-none flex items-center">
+                                        <span className="text-default-400 text-small w-48 text-right">
+                                            {product.newPrice ? 'Final price: $' + parseInt(product.newPrice).toLocaleString() : ''}
+                                        </span>
+                                    </div>
+                                }
+                                style={{
+                                    WebkitAppearance: 'none',
+                                    MozAppearance: 'textfield',
+                                    appearance: 'textfield',
+                                }}
+                                
                                 placeholder="0.00"
                                 startContent={
                                     <div className="pointer-events-none flex items-center">
@@ -298,39 +352,29 @@ const Page = () => {
                                     </div>
                                 }
                             />
-                            <Input
-                                type="number"
-                                label="New Price"
-                                disabled
-                                placeholder="0.00"
-                                value={product.discount ? product.newPrice : ''}
-                                startContent={
-                                    <div className="pointer-events-none flex items-center">
-                                        <span className="text-default-400 text-small">
-                                            $
-                                        </span>
-                                    </div>
-                                }
-                            />
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                           
                             <Select
-                                required
-                                label="Category"
-                                value={product.category}
-                                placeholder="Select a category"
-                                onChange={(e) => setProduct({
-                                    ...product,
-                                    category: e.target.value,
-                                })}
+                                label="Sizes"
+                                placeholder="Select sizes"
+                                value={product.sizes.join(',') || ''}
+                                selectionMode="multiple"
+                                onChange={(e) => {
+                                    const sizes = Array.from(e.target.value.split(','));
+                                    setProduct({
+                                        ...product,
+                                        sizes: sizes,
+                                    });
+                                }}
                             >
                                 {
-                                    categories.map((category) => (
-                                        <SelectItem key={category.name} value={category.name}>
-                                            {category.name}
+                                    sizes.map((size) => (
+                                        <SelectItem key={size.value} value={size.value}>
+                                            {size.value}
                                         </SelectItem>
                                     ))
                                 }
@@ -365,31 +409,25 @@ const Page = () => {
                             </Select>
                         </div>
                     </div>
-
+                    
                     <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
-                        <div className=" w-full flex-wrap md:flex-nowrap gap-4 grid lg:grid lg:grid-cols-2">
-                            <Select
-                                label="Sizes"
-                                placeholder="Select sizes"
-                                value={product.sizes.join(',') || ''}
-                                selectionMode="multiple"
-                                onChange={(e) => {
-                                    const sizes = Array.from(e.target.value.split(','));
-                                    setProduct({
+                        <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                            <Textarea
+                                label="Description"
+                                placeholder="Enter the product description"
+                                rows={4}
+                                value={product.description}
+                                onChange={
+                                    (e) => setProduct({
                                         ...product,
-                                        sizes: sizes,
-                                    });
-                                }}
-                            >
-                                {
-                                    sizes.map((size) => (
-                                        <SelectItem key={size.value} value={size.value}>
-                                            {size.value}
-                                        </SelectItem>
-                                    ))
+                                        description: e.target.value,
+                                    })
                                 }
-                            </Select>
-                            <div className="flex gap-4 items-center justify-around">
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4 items-center justify-around">
                                 <Switch
                                     defaultSelected={product.isAvailable}
                                     checked={product.isAvailable}
@@ -419,25 +457,6 @@ const Page = () => {
                                     Coming Soon
                                 </Switch>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
-                        <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                            <Textarea
-                                label="Description"
-                                placeholder="Enter the product description"
-                                rows={4}
-                                value={product.description}
-                                onChange={
-                                    (e) => setProduct({
-                                        ...product,
-                                        description: e.target.value,
-                                    })
-                                }
-                            />
-                        </div>
-                    </div>
 
                     <div className="flex flex-col gap-1 md:flex-row md:flex-wrap">
                         <label className="text-default-400 text-small ms-2">
