@@ -9,6 +9,7 @@ import {
 } from 'next/navigation';
 import Image from 'next/image';
 import { replaceSpacesWithDashes } from '@/utils';
+import Link from 'next/link';
 
 
 function classNames(...classes: string[]) {
@@ -67,7 +68,35 @@ const ProductDetails = ({
         <div className="bg-white">
             <div className="pt-6">
 
-                <div 
+
+            {/* <div className="flex justify-center items-center flex-wrap max-w-7xl mx-auto px-8 py-2">
+                {newProduct.imagesSrc.map((image, index) => (
+                    <div key={index} className="w-1/3 p-4">
+                    <img
+                        src={image.trim()}
+                        alt={newProduct.name}
+                        style={{ width: '450px', height: 'auto'}}
+                    />
+                    </div>
+                ))}
+            </div> */}
+
+                <div className="flex justify-center items-center flex-wrap max-w-7xl mx-auto">
+                    {newProduct.imagesSrc.map((image, index) => (
+                        <div key={index} className="lg:w-1/3 lg:p-4 flex justify-center">
+                            <Image
+                                priority
+                                width={1000}
+                                height={1000}
+                                src={image.trim()}
+                                alt={newProduct.name}
+                                className="sm:w-[100%] h-full lg:h-[500px] object-cover object-center lg:rounded-lg mt-1.5 lg:mt-0"
+                            />
+                        </div>
+                    ))}
+                </div>
+
+                {/* <div 
                     className='mx-auto sm:px-6 lg:grid lg:grid-cols-3 sm:grid-cols-2 lg:gap-x-8 lg:px-8 lg:max-w-7xl lg:gap-y-8 lg:pt-8 lg:pb-2'
                 >
                     {
@@ -90,12 +119,22 @@ const ProductDetails = ({
                             </div>
                         ))
                     }
-                </div>
+                </div> */}
 
                 {/* Product info */}
                 <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pb-24 lg:pt-16">
-                    <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
+                    <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8 lg:pb-8 flex flex-col lg:flex-row lg:items-start lg:justify-between">
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{newProduct.name}</h1>
+                        <p className="mt-1 text-sm text-gray-500">
+                            <Link 
+                                href={`/categories/${replaceSpacesWithDashes(newProduct.category)}`} 
+                                className="hover:underline"
+                            >
+                                Categoría <span className="text-gray-900 font-medium">
+                                    {newProduct.category}
+                                </span>
+                            </Link>
+                        </p>
                     </div>
 
                     {/* Options */}
