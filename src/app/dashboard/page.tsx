@@ -11,11 +11,9 @@ import { supabase } from '@/lib/supabase/initSupabase';
 import { SUPABASE_URL } from '@/environment';
 import { category, color, size } from '@/interfaces';
 import { Product } from '@/interfaces/products';
+import { convertPhraseToSnakeCase } from '@/utils';
+import { Toaster, toast } from 'sonner'
 
-
-export interface ListProducts {
-	products: Product[];
-}
 
 const Page = () => {
 
@@ -36,12 +34,11 @@ const Page = () => {
     });
 
     const [loadingSaveProduct, setLoadingSaveProduct] = useState<boolean>(false);
-    const [loadingUploadImages, setLoadingUploadImages] = useState<boolean>(false);
-    const [images, setImages] = useState<FileList>();
+    const [urlImages, setUrlImages] = useState<string[]>([]);
+    const [localImages, setLocalImages] = useState<File[]>([]);
     const [categories, setCategories] = useState<category[]>([]);
     const [colors, setColors] = useState<color[]>([]);
     const [sizes, setSizes] = useState<size[]>([]);
-
 
     const getCategories = async () => {
         let { data: types_categories, error } = await supabase
@@ -49,7 +46,9 @@ const Page = () => {
         .select('*')
 
         if (error) {
-            console.error('Error getting categories: ', error.message);
+            toast.error('Error getting categories',{
+                description: error.message,
+            });
             return;
         }
 
@@ -62,7 +61,9 @@ const Page = () => {
         .select('*')
 
         if (error) {
-            console.error('Error getting colors: ', error.message);
+            toast.error('Error getting colors',{
+                description: error.message,
+            });
             return;
         }
 
@@ -75,7 +76,9 @@ const Page = () => {
         .select('*')
 
         if (error) {
-            console.error('Error getting sizes: ', error.message);
+            toast.error('Error getting sizes',{
+                description: error.message,
+            });
             return;
         }
 
@@ -89,64 +92,120 @@ const Page = () => {
     }, []);
         
 
-    const saveProduct = async () => {
+    const saveProduct =  () => {
+        
         setLoadingSaveProduct(true);
-        const { data, error } = await supabase
-        .from('products')
-        .insert([
-            {
-                name: product.name.trim(),
-                description: product.description.trim(),
-                price: product.price,
-                discount: product.discount || null,
-                // new_price: product.newPrice || null,
-                colors: product.colors,
-                sizes: product.sizes,
-                category: product.category,
-                source_image: product.imagesSrc,
-                is_available: product.isAvailable,
-                is_coming_soon: product.isComingSoon,
+
+        uploadImagesStorage().then(async (urlImages: string[]) => {
+            const { data, error, status } = await supabase
+                .from('products')
+                .insert([
+                    {
+                        name: product.name.trim(),
+                        description: product.description.trim(),
+                        price: product.price,
+                        discount: product.discount || null,
+                        colors: product.colors,
+                        sizes: product.sizes,
+                        category: product.category,
+                        source_image: urlImages,
+                        is_available: product.isAvailable,
+                        is_coming_soon: product.isComingSoon,
+                    }
+                ])
+
+            if (error) {
+                setLoadingSaveProduct(false);
+                toast.error('Error inserting product',{
+                    description: error.message,
+                });
+                return;
             }
-        ])
 
-        if (error) {
+            if (status !== 201) {
+                setLoadingSaveProduct(false);
+                toast.error('Error inserting product');
+                return;
+            }
+
+            toast.success('Product saved successfully');
+
+            setProduct({
+                id: '',
+                name: '',
+                description: '',
+                price: '',
+                discount: '',
+                newPrice: '',
+                colors: [],
+                sizes: [],
+                category: '',
+                imagesSrc: [],
+                isAvailable: true,
+                isComingSoon: false,
+                createdAt: '',
+            });
+
+            setLocalImages([]);
+
+
+            
             setLoadingSaveProduct(false);
-            console.error('Error inserting product: ', error.message);
-            return;
-        }
-
-        setProduct({
-            id: '',
-            name: '',
-            description: '',
-            price: '',
-            discount: '',
-            newPrice: '',
-            colors: [],
-            sizes: [],
-            category: '',
-            imagesSrc: [],
-            isAvailable: true,
-            isComingSoon: false,
-            createdAt: '',
         });
 
-        setLoadingSaveProduct(false);
+    }
+
+    const uploadImagesStorage = async (): Promise<string[]> => {
+
+        if (!localImages) return [];
+
+        const files = localImages;
+
+        const sourceImageFinal: string[] = [];
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fullName = file.name;
+            const extension = fullName.split('.').pop();
+            const fileName = convertPhraseToSnakeCase(product.name) + '_' + new Date().getTime() + '.' + extension;
+
+            const fileImage = files[i];
+
+            const { data, error } = await supabase
+            .storage
+            .from('images')
+            .upload(fileName, fileImage, {
+                cacheControl: '36000',
+                upsert: false
+            })
+
+            if (error) {
+                toast.error('Error uploading image',{
+                    description: error.message,
+                });
+                return [];
+            }
+ 
+            const storageUrl = '/storage/v1/object/public/images/';
+            const urlImage = SUPABASE_URL + storageUrl + fileName;
+            
+            sourceImageFinal.push(urlImage);
+
+            setUrlImages([...urlImages, urlImage]);
+
+        }
+
+        return sourceImageFinal;
     }
 
     const calculateNewPrice = () => {
 
         if (product.discount === '0'){
-
-            console.log('entro aca');
-
             setProduct({
                 ...product,
                 discount: '',
                 newPrice: '',
             });
-
-            return;
         }
 
         if (product.price && product.discount) {
@@ -160,16 +219,12 @@ const Page = () => {
         }
     }
 
-    // console.log('product: ', product);
-
     useEffect(() => {
         calculateNewPrice();
     }, [product.price, product.discount]);
 
-    const uploadImagesStorage = async (event: React.ChangeEvent<HTMLInputElement>) => {
 
-        setLoadingUploadImages(true);
-
+    const handleImages = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) return;
 
         // maximo 2 MB por imagen
@@ -179,72 +234,29 @@ const Page = () => {
             const file = event.target.files[i];
             if (file.size > maxSize) {
                 alert('El tamaño de la imagen debe ser inferior a 2MB');
-                setLoadingUploadImages(false);
                 return;
             }
         }
 
         const files = event.target.files as FileList;
+        
+        const imagesArray = Array.from(files);
 
-        const sourceImageFinal: string[] = [];
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const fullName = file.name;
-            const extension = fullName.split('.').pop();
-            const fileName = 'img_' + new Date().getTime() + '.' + extension;
-
-            const fileImage = event.target.files[i];
-
-            const { data, error } = await supabase
-            .storage
-            .from('images')
-            .upload(fileName, fileImage, {
-                cacheControl: '3600',
-                upsert: false
-            })
-
-            if (error) {
-                console.error('Error uploading file: ', error.message);
-                return;
-            }
-
-            const storateUrl = '/storage/v1/object/public/images/';
-            const urlImage = SUPABASE_URL + storateUrl + data.path;
-
-            sourceImageFinal.push(urlImage)
+        if (files?.length) {
+            setLocalImages( [...localImages, ...imagesArray] );
         }
-
-        setProduct({
-            ...product,
-            imagesSrc: [...product.imagesSrc, ...sourceImageFinal],
-        });
-
-        setLoadingUploadImages(false);
-
     }
 
-    const deleteImageStorage = async (url: string) => {
-        const urlImage = url.split('/').pop() as string;
-
-        const { data, error } = await supabase.storage.from('images').remove([urlImage])
-    
-        if (error) {
-            console.error('Error deleting file: ', error.message);
-            return;
-        }
-
-        const newImagesSrc = product.imagesSrc.filter((imageSrc) => imageSrc !== url);
-        setProduct({
-            ...product,
-            imagesSrc: newImagesSrc,
-        });
+    const removeLocalImage = (index: number) => {
+        const newImages = Array.from(localImages);
+        newImages.splice(index, 1);
+        setLocalImages(newImages);
     }
 
 	return (
 		<>
 			<p className="text-lg text-gray-600 font-semibold text-center mt-8 mb-8">
-				Add a new product to the store
+				Add a new product to the store 🏪
 			</p>
 			<div className="flex flex-col gap-4 px-8 lg:px-32">
 				<form
@@ -333,7 +345,7 @@ const Page = () => {
                                 endContent={
                                     <div className="pointer-events-none flex items-center">
                                         <span className="text-default-400 text-small w-48 text-right">
-                                            {product.newPrice ? 'Final price: $' + parseInt(product.newPrice).toLocaleString() : ''}
+                                            {product.discount ? 'Final price: $' + parseInt(product.newPrice).toLocaleString() : ''}
                                         </span>
                                     </div>
                                 }
@@ -464,7 +476,7 @@ const Page = () => {
                         </label>
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             {
-                                loadingUploadImages &&
+                                loadingSaveProduct &&
                                 <Spinner size="sm" color="success" />
                             }
                             <input
@@ -475,7 +487,8 @@ const Page = () => {
                                 multiple
                                 max={5}
                                 onChange={(e) => {
-                                    uploadImagesStorage(e);
+                                    handleImages(e);
+                                    // uploadImagesStorage(e);
                                 }}
                                 style={{
                                     display: 'flex',
@@ -495,7 +508,49 @@ const Page = () => {
                     <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             <div className="flex flex-wrap gap-4 justify-center">
+
                                 {
+                                    localImages &&
+                                    Array.from(localImages).map((image, index) => (
+                                        <div key={index} className="relative w-38 border-1 border-white/20 rounded-large shadow-small">
+                                            <Card
+                                                isFooterBlurred
+                                                radius="lg"
+                                                className="border-none"
+                                            >
+                                                <Image
+                                                    alt={image.name}
+                                                    className="object-cover"
+                                                    height={200}
+                                                    src={URL.createObjectURL(image)}
+                                                    width={200}
+                                                />
+                                                <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+                                                    <p className="text-tiny text-white/80">
+                                                        Image {index + 1}
+                                                    </p>
+                                                    <Button 
+                                                        className="text-tiny text-white bg-black/20" 
+                                                        variant="flat" 
+                                                        color="default" 
+                                                        radius="lg" 
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            removeLocalImage(index);
+                                                        }}
+                                                    >
+                                                        Remove
+                                                    </Button>
+                                                </CardFooter>
+                                            </Card>
+                                        </div>
+                                    ))
+
+                                }
+
+
+
+                                {/* {
                                     product.imagesSrc.map((imageSrc, index) => (
                                         <div key={index} className="relative w-38 border-1 border-white/20 rounded-large shadow-small">
                                             <Card
@@ -530,7 +585,7 @@ const Page = () => {
                                             </Card>
                                         </div>
                                     ))
-                                }
+                                } */}
                             </div>
                         </div>
                     </div>
@@ -546,7 +601,8 @@ const Page = () => {
                                     !product.colors.length ||
                                     !product.sizes.length ||
                                     !product.description ||
-                                    !product.imagesSrc.length ?
+                                    loadingSaveProduct ||
+                                    !localImages?.length ?
                                         'default' 
                                     :
                                         'primary'
@@ -563,7 +619,8 @@ const Page = () => {
                                     !product.colors.length ||
                                     !product.sizes.length ||
                                     !product.description ||
-                                    !product.imagesSrc.length
+                                    loadingSaveProduct ||
+                                    !localImages?.length
                                 }
                             >
                                 Save
@@ -577,6 +634,8 @@ const Page = () => {
                     </div>
 				</form>
 			</div>
+
+            <Toaster richColors />
 		</>
 	);
 };
