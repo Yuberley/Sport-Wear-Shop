@@ -60,26 +60,29 @@ const ProductDetails = ({
     const phone = '573102614670';
     // const phone = '573003107055';
 
-    const whatsappMessage = `Hola, me interesa el *${product.name}* \n\n_N° Ref:_  *${product.id}* \n_Precio:_  ${product.discount ? '~'+product.price+'~' + '\n_Descuento:_  ' + '*'+product.discount+'*' + '\n_Precio final:_  ' + '*'+product.newPrice+'*' : product.price} *COP* \n\n${currentUrl}`;
+    const whatsappMessage = `Hola, me interesa este producto: *${product.name.trim()}* \n\n_N° Ref:_  *${
+		product.id
+	}* \n_Precio:_  ${
+		product.discount
+			? '~' +
+			  parseInt(product.price).toLocaleString() +
+			  '~' +
+			  '\n_Descuento:_  ' +
+			  '*' +
+			  product.discount +
+			  '%*' +
+			  '\n_Precio final:_  ' +
+			  '*' +
+			  parseInt(product.newPrice).toLocaleString() +
+			  '*'
+			: parseInt(product.price).toLocaleString()
+	} *COP* \n\n${currentUrl}`;
 
     const whatsappHref = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(whatsappMessage)}`;
 
     return (
         <div className="bg-white">
             <div className="pt-6">
-
-
-            {/* <div className="flex justify-center items-center flex-wrap max-w-7xl mx-auto px-8 py-2">
-                {newProduct.imagesSrc.map((image, index) => (
-                    <div key={index} className="w-1/3 p-4">
-                    <img
-                        src={image.trim()}
-                        alt={newProduct.name}
-                        style={{ width: '450px', height: 'auto'}}
-                    />
-                    </div>
-                ))}
-            </div> */}
 
                 <div className="flex justify-center items-center flex-wrap max-w-7xl mx-auto">
                     {newProduct.imagesSrc.map((image, index) => (
@@ -95,31 +98,6 @@ const ProductDetails = ({
                         </div>
                     ))}
                 </div>
-
-                {/* <div 
-                    className='mx-auto sm:px-6 lg:grid lg:grid-cols-3 sm:grid-cols-2 lg:gap-x-8 lg:px-8 lg:max-w-7xl lg:gap-y-8 lg:pt-8 lg:pb-2'
-                >
-                    {
-                        newProduct.imagesSrc.map((image, index) => (
-                            <div 
-                                key={index} 
-                                className={
-                                    `aspect-h-4 aspect-w-3 overflow-hidden lg:rounded-lg 
-                                    ${index > 0 ? 'block' : ''}`
-                                    }
-                                >
-                                <Image
-                                    priority
-                                    width={1000}
-                                    height={1000}
-                                    src={image.trim()}
-                                    alt={newProduct.name}
-                                    className="h-full w-full object-cover object-center mt-1.5 lg:mt-0"
-                                />
-                            </div>
-                        ))
-                    }
-                </div> */}
 
                 {/* Product info */}
                 <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pb-24 lg:pt-16">
