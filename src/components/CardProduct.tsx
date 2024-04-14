@@ -1,4 +1,3 @@
-"use client";
 import React from 'react';
 import { Product } from '../interfaces/products';
 import Link from 'next/link';
@@ -40,9 +39,8 @@ const CardProduct = ({ product }: CardProductProps) => {
                 </div>
                 <div className="mt-4">
                     
-                        <div className="flex justify-between">
+                        <div className="flex justify-between min-h-10 border-b-1 border-gray-200">
                             <h3 className="text-sm text-gray-800 max-w-[180px]">
-                                    {/* <span aria-hidden="true" className="absolute inset-0" /> */}
                                     {product.name}
                             </h3>
                             <p className="text-sm font-medium text-gray-900">
@@ -50,26 +48,22 @@ const CardProduct = ({ product }: CardProductProps) => {
                                     <div className="flex flex-col">
                                         <span className=" text-green-600 font-bold">{
                                         parseInt(product.newPrice).toLocaleString() + ' COP'}</span>
-                                        <span className="line-through text-gray-400 font-normal text-[12px] flex justify-end mb-[-4px]">{parseInt(product.price).toLocaleString() + ' COP'}</span>
+                                        <span className="line-through text-gray-400 font-normal text-[12px] flex justify-end mb-[-6px]">{parseInt(product.price).toLocaleString() + ' COP'}</span>
                                     </div>
                                     : 
                                     <span className="text-gray-600 font-semibold">{parseInt(product.price).toLocaleString() + ' COP'}</span>
                                 }
                             </p>
                         </div>
-                    <p className="mt-1 text-sm text-gray-400">
-                        {/* {
-                            product.colors.map((color, index) => (
-                                <span key={index} className="mr-1">
-                                    {color}
-                                    {index < product.colors.length - 1 ? ', ' : ''}
-                                </span>
-                            ))
-                        } */}
-
-                                <span className="mr-1">
-                                    {product.description.length > 80 ? product.description.substring(0, 80) + '...' : product.description}
-                                </span>
+                    <p className="mt-1 text-sm text-gray-400 hidden md:block">
+                        <span className="mr-1">
+                            {product.description.length > 70 ? product.description.substring(0, 36) + '...' : product.description}
+                        </span>
+                    </p>
+                    <p className="mt-1 text-sm text-gray-400 md:hidden sm:block">
+                        <span className="mr-1">
+                            {product.description.length > 70 ? product.description.substring(0, 48) + '...' : product.description}
+                        </span>
                     </p>
                 </div>
             </div>
