@@ -13,6 +13,7 @@ import { category, color, size } from '@/interfaces';
 import { Product } from '@/interfaces/products';
 import { convertPhraseToSnakeCase } from '@/utils';
 import { Toaster, toast } from 'sonner'
+import Link from 'next/link';
 
 
 const Page = () => {
@@ -255,6 +256,26 @@ const Page = () => {
 
 	return (
 		<>
+            <Link
+                    href="/"
+                    className="absolute left-8 top-8 py-2 px-0  md:px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
+                    >
+                        <polyline points="15 18 9 12 15 6" />
+                    </svg>{" "}
+                    Main Page
+                </Link>
 			<p className="text-lg text-gray-600 font-semibold text-center mt-8 mb-8">
 				Add a new product to the store 🏪
 			</p>
