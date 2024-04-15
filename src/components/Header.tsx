@@ -130,13 +130,12 @@ export default function Header() {
                     </Link>
                 </Popover.Group>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                    {/* {
-                        timer !== '00:00' && (
-                            <div className="text-xs font-semibold leading-6 text-gray-400">
-                                Actualizando en: {timer}
-                            </div>
-                        )
-                    } */}
+                    <Link
+                        href="/login"
+                        className="text-xs font-semibold leading-6 text-gray-200"
+                    >
+                        Dashboard
+                    </Link>
                 </div>
             </nav>
             <Dialog 
@@ -216,6 +215,14 @@ export default function Header() {
                                 >
                                   Contacto
                                 </Link>
+                                <Link
+                                    href="/login"
+                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-200 hover:bg-gray-50"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Dashboard
+                                </Link>
+
                             </div>
                         </div>
                     </div>

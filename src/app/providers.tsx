@@ -1,5 +1,4 @@
-// app/providers.tsx
-'use client'
+'use client';
 
 import Header from '@/components/Header'
 import { NextUIProvider } from '@nextui-org/react';

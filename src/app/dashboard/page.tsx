@@ -14,11 +14,6 @@ import { Product } from '@/interfaces/products';
 import { convertPhraseToSnakeCase } from '@/utils';
 import { Toaster, toast } from 'sonner'
 
-import { useRouter  } from "next/navigation";
-
-export interface ListProducts {
-	products: Product[];
-}
 
 const Page = () => {
 
