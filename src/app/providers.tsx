@@ -1,5 +1,4 @@
-// app/providers.tsx
-'use client'
+'use client';
 
 import Header from '@/components/Header'
 import { NextUIProvider } from '@nextui-org/react';
@@ -11,7 +10,7 @@ export function Providers({children}: { children: React.ReactNode }) {
 
     return (
         <NextUIProvider>
-            {pathname !== "/dashboard" && <Header />}
+            {(pathname !== "/dashboard" && pathname !== "/login") && <Header />}
             {children}
         </NextUIProvider>
     )
