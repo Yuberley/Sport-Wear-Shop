@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import ListProducts from "@/components/ListProducts";
 import { ListProductsSkeleton } from "../skeletons";
 import { cookies } from "next/headers";
+import 'animate.css';
 
 import type { Metadata } from "next";
 

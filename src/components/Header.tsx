@@ -41,14 +41,14 @@ export default function Header() {
 
     return (
         <header className="bg-white">
-            <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+            <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:p-0 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link href="/" className="-m-6 p-1.5">
                         <span className="sr-only">YL Sport Wear</span>
                         <Image 
                             width={300}
                             height={300}
-                            className="h-20 w-auto" 
+                            className="h-24 lg:h-40 w-auto" 
                             src={LogoYLSPORT}
                             alt="logo"
                         />
@@ -130,12 +130,12 @@ export default function Header() {
                     </Link>
                 </Popover.Group>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                    <Link
+                    {/* <Link
                         href="/login"
                         className="text-xs font-semibold leading-6 text-gray-200"
                     >
                         Dashboard
-                    </Link>
+                    </Link> */}
                 </div>
             </nav>
             <Dialog 
@@ -215,13 +215,13 @@ export default function Header() {
                                 >
                                   Contacto
                                 </Link>
-                                <Link
+                                {/* <Link
                                     href="/login"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-200 hover:bg-gray-50"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
                                     Dashboard
-                                </Link>
+                                </Link> */}
 
                             </div>
                         </div>

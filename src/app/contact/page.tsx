@@ -7,7 +7,7 @@ import Image from 'next/image';
 export default function Contact() {    
 
     return (
-        <div className="bg-white py-24 sm:py-32 my-[6%]">
+        <div className="bg-white py-24 sm:py-32 my-[6%] animate__animated animate__bounceIn">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
                 <h2 className="text-center text-lg font-semibold leading-8 text-gray-900">
                     Nuestras redes sociales

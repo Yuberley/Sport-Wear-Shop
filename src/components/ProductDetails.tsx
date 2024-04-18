@@ -93,7 +93,7 @@ const ProductDetails = ({
                                 height={1000}
                                 src={image.trim()}
                                 alt={newProduct.name}
-                                className="sm:w-[100%] h-full lg:h-[500px] object-cover object-center lg:rounded-lg mt-1.5 lg:mt-0"
+                                className="sm:w-[100%] h-full lg:h-[500px] object-cover object-center lg:rounded-lg mt-1.5 lg:mt-0 lg:hover:scale-110 hover:shadow-gray-400 hover:shadow-2xl duration-200"
                             />
                         </div>
                     ))}
