@@ -122,14 +122,14 @@ const ProductDetails = ({
                         {
                             !newProduct.discount ?
                             <div className="flex items-center">
-                                <p className="text-3xl tracking-tight text-gray-900">{'$' + parseInt(newProduct.price).toLocaleString() + ' COP'}</p>
+                                <p className="text-3xl tracking-tight text-green-600 font-bold">{'$' + parseInt(newProduct.price).toLocaleString() + ' COP'}</p>
                             </div>
                             :
                             <div className="flex items-center justify-between">
-                                <p className="text-2xl lg:text-3xl tracking-tight text-gray-900">{'$' + parseInt(newProduct.newPrice).toLocaleString() + ' COP'}</p>
+                                <p className="text-2xl lg:text-3xl tracking-tight text-red-700 font-bold">{'$' + parseInt(newProduct.newPrice).toLocaleString() + ' COP'}</p>
                                 <div className="flex items-center ml-4 float-right">
-                                    <p className="ml-3 text-1xl text-emerald-800 font-bold bg-emerald-100 rounded-md p-2">
-                                        {newProduct.discount + '%'}
+                                    <p className="ml-3 text-1xl text-red-800 font-bold bg-red-200 rounded-md p-2">
+                                        {'-' + newProduct.discount + '%'}
                                     </p>
                                     <p className="ml-3 text-1xl text-gray-500 line-through">{'$' + parseInt(newProduct.price).toLocaleString()}</p>
                                 </div>
