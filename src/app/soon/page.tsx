@@ -2,7 +2,6 @@ import ListProducts from '@/components/ListProducts';
 import { ListProductsSkeleton } from '@/skeletons';
 import React, { Suspense } from 'react';
 import { cookies } from "next/headers";
-import { Metadata } from 'next';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { Product } from '@/interfaces/products';
 import { mapProductList } from '@/utils/mappers';

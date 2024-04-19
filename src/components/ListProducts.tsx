@@ -1,7 +1,5 @@
 import CardProduct from "@/components/CardProduct";
 import { Product } from "@/interfaces/products";
-import { supabase } from "@/lib/supabase/initSupabase";
-import { mapProductList } from "@/utils/mappers";
 
 
 // export default async function ListProducts({category, commigsoon}: {category?: string, commigsoon?: boolean}) {

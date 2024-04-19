@@ -3,7 +3,6 @@ import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
 import { SubmitButton } from "@/app/login/submit-button";
 import { supabase } from "@/lib/supabase/initSupabase";
-import { m } from "framer-motion";
 import { Toaster, toast } from "sonner";
 import { Input } from '@nextui-org/input';
 import Image from "next/image";
