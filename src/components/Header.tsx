@@ -10,6 +10,8 @@ import { replaceSpacesWithDashes } from '@/utils';
 import LogoYLSPORT from './../../public/logo_ylsport.jpg';
 import { category } from '@/interfaces';
 import { supabase } from '@/lib/supabase/initSupabase';
+import { Button } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 
 function classNames(...classes: (string | boolean | null | undefined)[]) {
     return classes.filter(Boolean).join(' ')
@@ -17,6 +19,7 @@ function classNames(...classes: (string | boolean | null | undefined)[]) {
 
 export default function Header() {
 
+    const router = useRouter();
     const [categories, setCategories] = useState<category[]>([])
 
     const getCategories = async () => {
@@ -119,9 +122,9 @@ export default function Header() {
 
 
                     <Link 
-                        href="/soon"
-                        className="text-sm font-semibold leading-6 text-gray-900">
-                        Próximamente
+                        href="/promotions"
+                        className="text-sm font-semibold leading-6 text-rose-600">
+                        Promociones
                     </Link>
                     <Link 
                         href="/contact"
@@ -130,12 +133,17 @@ export default function Header() {
                     </Link>
                 </Popover.Group>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                    {/* <Link
+                    {/* <Link 
                         href="/login"
-                        className="text-xs font-semibold leading-6 text-gray-200"
-                    >
-                        Dashboard
-                    </Link> */}
+                        className="text-sm font-semibold leading-6 text-gray-900"> */}
+                        <Button
+                            variant="bordered"
+                            color="primary"
+                            onClick={() => router.push('/soon')}
+                        >
+                            Próximamente 😯
+                        </Button>
+                    {/* </Link> */}
                 </div>
             </nav>
             <Dialog 

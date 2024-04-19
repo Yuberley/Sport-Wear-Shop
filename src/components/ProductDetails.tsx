@@ -10,6 +10,7 @@ import {
 import Image from 'next/image';
 import { replaceSpacesWithDashes } from '@/utils';
 import Link from 'next/link';
+import { capitalizeFirstLetterName } from "@/utils";
 
 
 function classNames(...classes: string[]) {
@@ -101,15 +102,33 @@ const ProductDetails = ({
 
                 {/* Product info */}
                 <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pb-24 lg:pt-16">
-                    <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8 lg:pb-8 flex flex-col lg:flex-row lg:items-start lg:justify-between">
-                        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{newProduct.name}</h1>
+                    <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8 lg:pb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{capitalizeFirstLetterName(newProduct.name)}</h1>
                         <p className="mt-1 text-sm text-gray-500">
                             <Link 
-                                href={`/categories/${replaceSpacesWithDashes(newProduct.category)}`} 
-                                className="hover:underline"
+                                href={`/categories/${replaceSpacesWithDashes(newProduct.category)}`}
+                                className="hover:underline text-[#478BE6] flex lg:flex lg:flex-col justify-center lg:items-center font-medium flex-row-reverse gap-1 lg:gap-0"
                             >
-                                Categoría <span className="text-gray-900 font-medium">
+                                <span className="text-[#478BE6]">
                                     {newProduct.category}
+                                </span>
+                                <span className='flex items-center ml-1 md:ml-0'>
+                                    ver categoría 
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1 hidden lg:block"
+                                    >
+                                        <line x1="3" y1="12" x2="15" y2="12" />
+                                        <polyline points="15 18 21 12 15 6" />
+                                    </svg>
                                 </span>
                             </Link>
                         </p>

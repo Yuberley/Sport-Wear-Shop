@@ -10,6 +10,13 @@ export const capitalizeFirstLetter = (str: string) => {
     }).join(' ');
 }
 
+export const capitalizeFirstLetterName = (str: string) => {
+    const strArray = str.split(' ')
+    return strArray.map( (word: string) => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }).join(' ');
+}
+
 export const convertPhraseToSnakeCase = (frase: string): string => {
      // Eliminar caracteres no deseados (tildes y caracteres raros)
     const fraseSinTildes = frase.normalize("NFD") // Eliminar tildes

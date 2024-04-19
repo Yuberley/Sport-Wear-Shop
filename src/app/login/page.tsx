@@ -1,7 +1,5 @@
 "use client";
 import Link from "next/link";
-// import { headers } from "next/headers";
-// import { createClient } from "@/lib/supabase/clientServer";
 import { redirect, useRouter } from "next/navigation";
 import { SubmitButton } from "@/app/login/submit-button";
 import { supabase } from "@/lib/supabase/initSupabase";
