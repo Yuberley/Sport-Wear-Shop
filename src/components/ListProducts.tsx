@@ -4,39 +4,9 @@ import { supabase } from "@/lib/supabase/initSupabase";
 import { mapProductList } from "@/utils/mappers";
 
 
-export default async function ListProducts({category, commigsoon}: {category?: string, commigsoon?: boolean}) {
+// export default async function ListProducts({category, commigsoon}: {category?: string, commigsoon?: boolean}) {
+export default async function ListProducts({products}: {products: Product[]}) {
 
-    const products: Product[] = [];
-
-    if (category) {
-        const { data } = await supabase
-            .from('products')
-            .select('*')
-            .eq('category', category)
-            .eq('is_available', true)
-            .eq('is_coming_soon', false);
-
-        if (data) products.push(...mapProductList(data));
-    } 
-    
-    if (commigsoon) {
-        const { data } = await supabase
-            .from('products')
-            .select('*')
-            .eq('is_coming_soon', true);
-
-        if (data) products.push(...mapProductList(data));
-    }
-
-    if (!category && !commigsoon) {
-        const { data } = await supabase
-            .from('products')
-            .select('*')
-            .eq('is_available', true)
-            .eq('is_coming_soon', false);
-
-        if (data) products.push(...mapProductList(data));
-    };
 
     if (!products?.length) {
         return (

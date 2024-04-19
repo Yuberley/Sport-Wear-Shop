@@ -1,4 +1,3 @@
-import facebook_logo from '../../../public/icons8-facebook-nuevo-480.png';
 import instagram_logo from '../../../public/icons8-instagram-480.png';
 import whatsapp_logo from '../../../public/icons8-whatsapp-480.png';
 
@@ -7,7 +6,7 @@ import Image from 'next/image';
 export default function Contact() {    
 
     return (
-        <div className="bg-white py-24 sm:py-32 my-[6%] animate__animated animate__bounceIn">
+        <div className="bg-white py-24 sm:py-32 my-[6%] animate__animated animate__fadeIn">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
                 <h2 className="text-center text-lg font-semibold leading-8 text-gray-900">
                     Nuestras redes sociales

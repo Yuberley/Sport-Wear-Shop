@@ -133,17 +133,13 @@ export default function Header() {
                     </Link>
                 </Popover.Group>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                    {/* <Link 
-                        href="/login"
-                        className="text-sm font-semibold leading-6 text-gray-900"> */}
-                        <Button
-                            variant="bordered"
-                            color="primary"
-                            onClick={() => router.push('/soon')}
-                        >
-                            Próximamente 😯
-                        </Button>
-                    {/* </Link> */}
+                    <Button
+                        variant="bordered"
+                        color="primary"
+                        onClick={() => router.push('/soon')}
+                    >
+                        Próximamente 😯
+                    </Button>
                 </div>
             </nav>
             <Dialog 
@@ -211,10 +207,17 @@ export default function Header() {
                                 </Link>
                                 <Link
                                     href="/soon"
+                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-rose-600 hover:bg-gray-50"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Promociones
+                                </Link>
+                                <Link
+                                    href="/soon"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                    Próximamente
+                                    Próximamente 😯
                                 </Link>
                                 <Link 
                                     href="/contact"
@@ -223,13 +226,6 @@ export default function Header() {
                                 >
                                   Contacto
                                 </Link>
-                                {/* <Link
-                                    href="/login"
-                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-200 hover:bg-gray-50"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
-                                    Dashboard
-                                </Link> */}
 
                             </div>
                         </div>

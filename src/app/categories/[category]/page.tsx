@@ -6,6 +6,9 @@ import {
 } from "next/navigation";
 import { capitalizeFirstLetter } from "@/utils";
 import { cookies } from "next/headers";
+import { Product } from "@/interfaces/products";
+import { supabase } from "@/lib/supabase/initSupabase";
+import { mapProductList } from "@/utils/mappers";
 
 export default async function Category(props: any) {
 
@@ -15,14 +18,26 @@ export default async function Category(props: any) {
     let categoryTitle = '';
     let categorySlug = '';
 
+    if (!category) {
+        return notFound;
+    }
+
     if (category) {
         categoryTitle = capitalizeFirstLetter(category.charAt(0).toUpperCase() + category.slice(1));
         categorySlug = category.split('-').join(' ');
     }
 
-    if (!category) {
-        return notFound;
-    }
+    const products: Product[] = [];
+    
+    const { data } = await supabase
+        .from('products')
+        .select('*')
+        .eq('category', categorySlug)
+        .eq('is_available', true)
+        .eq('is_coming_soon', false);
+
+    if (data) products.push(...mapProductList(data));
+
 
     return (
         <div className="bg-white">
@@ -35,7 +50,7 @@ export default async function Category(props: any) {
                 <Suspense
                     fallback={<ListProductsSkeleton />}
                 >
-                    <ListProducts category={categorySlug} />
+                    <ListProducts products={products} />
                 </Suspense>
             </div>
         </div>

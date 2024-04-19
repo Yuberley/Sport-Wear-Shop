@@ -163,7 +163,7 @@ const ProductDetails = ({
                                 <RadioGroup value={selectedColor} onChange={setSelectedColor}
                                 className="mt-4">
                                     <RadioGroup.Label className="sr-only">Elige un color</RadioGroup.Label>
-                                    <div className="flex items-center space-y-1 flex-wrap">
+                                    <div className="flex items-center flex-wrap">
                                         {newProduct.colors.map((color) => (
                                             <RadioGroup.Option
                                                 key={color.name}
