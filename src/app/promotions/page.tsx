@@ -4,8 +4,11 @@ import { supabase } from '@/lib/supabase/initSupabase';
 import { ListProductsSkeleton } from '@/skeletons';
 import { mapProductList } from '@/utils/mappers';
 import React, { Suspense } from 'react'
+import { cookies } from "next/headers";
 
 const Promotions = async () => {
+
+    const cookieStore = cookies();
 
     const products: Product[] = [];
 
