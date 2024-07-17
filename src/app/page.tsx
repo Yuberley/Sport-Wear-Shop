@@ -23,6 +23,10 @@ export default async function Home() {
 
     const cookieStore = cookies();
 
+    // const columns = ['id', 'name', 'price', 'category', 'is_coming_soon'];
+    const columns: (keyof Product)[] = ['id', 'name', 'price', 'category'];
+
+
     const products: Product[] = [];
     
     const { data } = await supabase
@@ -32,6 +36,12 @@ export default async function Home() {
         .eq('is_coming_soon', false);
 
     if (data) products.push(...mapProductList(data));
+
+    // Barajar los productos usando Fisher-Yates (Durstenfeld)
+    for (let i = products.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [products[i], products[j]] = [products[j], products[i]];
+    }
 
     return (
         <div className="bg-white">
