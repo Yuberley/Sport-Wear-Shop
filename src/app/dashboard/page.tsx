@@ -148,10 +148,9 @@ const Page = () => {
             });
 
             setLocalImages([]);
-
-
-            
             setLoadingSaveProduct(false);
+
+            window.location.reload();
         });
 
     }
