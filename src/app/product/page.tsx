@@ -37,6 +37,7 @@ export default async function Page({ searchParams }: PageProps) {
         .from('products')
         .select('*')
         .eq('id', id)
+        .eq('is_available', true)
         .single();
 
     if (error) {
