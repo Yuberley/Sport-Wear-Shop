@@ -34,8 +34,7 @@ export default function Login({
         return () => {
             authListener.subscription.unsubscribe();
         }
-    }
-    , []);
+    }, [router]);
 
     if (loadingPage) {
         return <div
