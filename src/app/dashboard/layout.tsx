@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from "@/lib/supabase/initSupabase";
 import { useRouter } from 'next/navigation';
-import {Spinner} from "@nextui-org/react";
+import { Spinner } from "@nextui-org/react";
+import SideNav from '@/components/dashboard/SideNav';
 
 
 
@@ -27,16 +28,19 @@ export default function DashboardLayout({children}: Readonly<{children: React.Re
     }, [router]);
 
     if (loading) {
-        // Mostrar pantalla de carga mientras se verifica la sesión
-        return (<div className="flex items-center justify-center h-screen bg-background">
-            <Spinner label="Loading..." color="success" labelColor="success" />
-        </div>);
+        return (
+            <div className="flex items-center justify-center h-screen bg-background">
+                <Spinner label="Loading..." color="success" labelColor="success" />
+            </div>
+        );
     }
 
-    // Mostrar el contenido solo si ya se ha verificado que el usuario está autenticado
     return (
         <main>
-            {children}
+            <SideNav />
+            <div className="flex-1 p-4 ml-64">
+                {children}
+            </div>
         </main>
     );
 }
