@@ -12,9 +12,7 @@ import { SUPABASE_URL } from '@/environment';
 import { category, color, size } from '@/interfaces';
 import { Product } from '@/interfaces/products';
 import { convertPhraseToSnakeCase } from '@/utils';
-import { Toaster, toast } from 'sonner'
-import Link from 'next/link';
-
+import { Toaster, toast } from 'sonner';
 
 const Page = () => {
 

@@ -1,19 +1,24 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Product } from '@/interfaces/products';
-import { Toaster, toast } from 'sonner';
+import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
-import { Button } from "@nextui-org/react";
-import { Spinner, Tooltip, Chip } from "@nextui-org/react";
-import { mapProduct, mapProductList } from '@/utils/mappers';
+import { Spinner, Tooltip, Chip, Pagination, getKeyValue } from "@nextui-org/react";
+import { mapProductList } from '@/utils/mappers';
 import { capitalizeFirstLetter } from "@/utils";
 import { formatDate, formatDiscount, formatPrice } from '@/utils/formatters';
+import Link from 'next/link';
 
 
 export default function Products() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const rowsPerPage = 12;
+
+    const pages = Math.ceil(products.length / rowsPerPage);
+
 
     const getProducts = async () => {
         setLoading(true);
@@ -30,6 +35,7 @@ export default function Products() {
         setLoading(false);
     };
 
+    
     useEffect(() => {
         getProducts();
     }, []);
@@ -63,8 +69,16 @@ export default function Products() {
                 (
                 <div className="bg-white">
                     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-                        <h2 className="text-2xl font-bold tracking-tight text-gray-500">
+                        <h2 className="text-2xl font-bold tracking-tight text-gray-500 pb-6">
                             Productos
+
+                            <Link
+                                href="/dashboard/products/create"
+                                className="float-right border border-gray-400 text-gray-500 px-4 py-1 rounded-md hover:bg-gray-500 hover:text-white text-[18px]"
+                            >
+                                Add Product
+                            </Link>
+
                         </h2>
                         <Table aria-label="Table with product information">
                             <TableHeader>
@@ -73,8 +87,8 @@ export default function Products() {
                                 <TableColumn>PRICE</TableColumn>
                                 <TableColumn>DISCOUNT</TableColumn>
                                 <TableColumn>NEW PRICE</TableColumn>
-                                <TableColumn>COLORS</TableColumn>
-                                <TableColumn>SIZES</TableColumn>
+                                {/* <TableColumn>COLORS</TableColumn>
+                                <TableColumn>SIZES</TableColumn> */}
                                 <TableColumn>CATEGORY</TableColumn>
                                 <TableColumn>IS AVAILABLE</TableColumn>
                                 <TableColumn>COMING SOON</TableColumn>
@@ -90,8 +104,8 @@ export default function Products() {
                                                 <TableCell>{formatPrice(product?.price)}</TableCell>
                                                 <TableCell>{formatDiscount(product?.discount)}</TableCell>
                                                 <TableCell>{formatPrice(product?.newPrice)}</TableCell>
-                                                <TableCell>{product?.colors?.join(', ')}</TableCell>
-                                                <TableCell>{product?.sizes?.join(', ')}</TableCell>
+                                                {/* <TableCell>{product?.colors?.join(', ')}</TableCell>
+                                                <TableCell>{product?.sizes?.join(', ')}</TableCell> */}
                                                 <TableCell>{capitalizeFirstLetter(product?.category)}</TableCell>
                                                 <TableCell>{product?.isAvailable ? <Chip color="success" size="sm" variant="flat">Yes</Chip> : <Chip color="danger" size="sm" variant="flat">No</Chip>}</TableCell>
                                                 <TableCell>{product?.isComingSoon ? <Chip color="success" size="sm" variant="flat">Yes</Chip> : <Chip color="warning" size="sm" variant="flat">No</Chip>}</TableCell>
