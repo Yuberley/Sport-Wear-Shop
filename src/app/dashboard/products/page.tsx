@@ -4,7 +4,7 @@ import { Product } from '@/interfaces/products';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
-import { Spinner, Tooltip, Chip, Pagination, getKeyValue } from "@nextui-org/react";
+import { Spinner, Tooltip, Chip, Pagination } from "@nextui-org/react";
 import { mapProductList } from '@/utils/mappers';
 import { capitalizeFirstLetter } from "@/utils";
 import { formatDate, formatDiscount, formatPrice } from '@/utils/formatters';
@@ -14,17 +14,20 @@ import Link from 'next/link';
 export default function Products() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
+    const [totalProducts, setTotalProducts] = useState(0);
     const [page, setPage] = useState(1);
     const rowsPerPage = 12;
 
-    const pages = Math.ceil(products.length / rowsPerPage);
-
-
     const getProducts = async () => {
         setLoading(true);
-        let { data: productList, error } = await supabase
+
+        const from = (page - 1) * rowsPerPage; // Inicio del rango
+        const to = from + rowsPerPage - 1;     // Fin del rango
+        
+        let { data: productList, error, count } = await supabase
             .from('products')
             .select('*')
+            .range(from, to);
 
         if (error) {
             toast.error('Error fetching products');
@@ -33,12 +36,17 @@ export default function Products() {
 
         setProducts(mapProductList(productList));
         setLoading(false);
+        setTotalProducts(count || 0);
     };
 
+    const handlePageChange = (newPage: number) => {
+        console.log('newPage', newPage);
+        setPage(newPage);
+    };
     
     useEffect(() => {
         getProducts();
-    }, []);
+    }, [page]);
 
     if (loading) {
         return (
@@ -80,7 +88,22 @@ export default function Products() {
                             </Link>
 
                         </h2>
-                        <Table aria-label="Table with product information">
+                        <Table 
+                            aria-label="Table with product information"
+                            bottomContent={
+                                <div className="flex w-full justify-center">
+                                    <Pagination
+                                    isCompact
+                                    showControls
+                                    showShadow
+                                        total={Math.ceil(totalProducts / rowsPerPage)}
+                                        initialPage={1} 
+                                        page={page}
+                                        color="secondary"
+                                        onChange={(newPage) => handlePageChange(newPage)}
+                                    />
+                                </div>
+                            }>
                             <TableHeader>
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>NAME</TableColumn>
@@ -223,90 +246,3 @@ export const DeleteIcon = (props: any) => (
       />
     </svg>
 );
-
-
-// import React from "react";
-// import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue} from "@nextui-org/react";
-// import {EditIcon} from "./EditIcon";
-// import {DeleteIcon} from "./DeleteIcon";
-// import {EyeIcon} from "./EyeIcon";
-// import {columns, users} from "./data";
-
-// const statusColorMap = {
-//   active: "success",
-//   paused: "danger",
-//   vacation: "warning",
-// };
-
-// export default function App() {
-//   const renderCell = React.useCallback((user, columnKey) => {
-//     const cellValue = user[columnKey];
-
-//     switch (columnKey) {
-//       case "name":
-//         return (
-//           <User
-//             avatarProps={{radius: "lg", src: user.avatar}}
-//             description={user.email}
-//             name={cellValue}
-//           >
-//             {user.email}
-//           </User>
-//         );
-//       case "role":
-//         return (
-//           <div className="flex flex-col">
-//             <p className="text-bold text-sm capitalize">{cellValue}</p>
-//             <p className="text-bold text-sm capitalize text-default-400">{user.team}</p>
-//           </div>
-//         );
-//       case "status":
-//         return (
-//           <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-//             {cellValue}
-//           </Chip>
-//         );
-//       case "actions":
-//         return (
-//           <div className="relative flex items-center gap-2">
-//             <Tooltip content="Details">
-//               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-//                 <EyeIcon />
-//               </span>
-//             </Tooltip>
-//             <Tooltip content="Edit user">
-//               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-//                 <EditIcon />
-//               </span>
-//             </Tooltip>
-//             <Tooltip color="danger" content="Delete user">
-//               <span className="text-lg text-danger cursor-pointer active:opacity-50">
-//                 <DeleteIcon />
-//               </span>
-//             </Tooltip>
-//           </div>
-//         );
-//       default:
-//         return cellValue;
-//     }
-//   }, []);
-
-//   return (
-//   <Table aria-label="Example table with custom cells">
-//       <TableHeader columns={columns}>
-//         {(column) => (
-//           <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
-//             {column.name}
-//           </TableColumn>
-//         )}
-//       </TableHeader>
-//       <TableBody items={users}>
-//         {(item) => (
-//           <TableRow key={item.id}>
-//             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-//           </TableRow>
-//         )}
-//       </TableBody>
-//     </Table>
-//   );
-// }
