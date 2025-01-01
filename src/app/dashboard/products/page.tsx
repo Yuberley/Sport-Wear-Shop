@@ -1,248 +1,157 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Product } from '@/interfaces/products';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/initSupabase';
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
-import { Spinner, Tooltip, Chip, Pagination } from "@nextui-org/react";
+import { Spinner, Input } from "@nextui-org/react";
 import { mapProductList } from '@/utils/mappers';
-import { capitalizeFirstLetter } from "@/utils";
-import { formatDate, formatDiscount, formatPrice } from '@/utils/formatters';
 import Link from 'next/link';
-
+import useDebounce from '@/hooks/useDebunce';
+import ProductTable from '@/components/dashboard/ProductTable';
+import { NAME_BUCKET_IMAGES } from '@/constants';
 
 export default function Products() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
-    const [totalProducts, setTotalProducts] = useState(0);
+    const [productQuantity, setProductQuantity] = useState(0);
     const [page, setPage] = useState(1);
-    const rowsPerPage = 12;
+    const [rowsPerPage, setRowsPerPage] = useState(12);
+    const [searchTerm, setSearchTerm] = useState("");
+    const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-    const getProducts = async () => {
+    const getProducts = useCallback(async (searchProductName?: string) => {
         setLoading(true);
 
-        const from = (page - 1) * rowsPerPage; // Inicio del rango
-        const to = from + rowsPerPage - 1;     // Fin del rango
-        
-        let { data: productList, error, count } = await supabase
-            .from('products')
-            .select('*')
-            .range(from, to);
+        if ( searchProductName && searchProductName.trim() !== '' ) {
+            let { data: productList, error } = await supabase
+                .from('products')
+                .select('*')
+                .textSearch('name', searchProductName, { 
+                    type: 'websearch'
+                });
 
+            if (error) {
+                toast.error('Error searching for products');
+                return;
+            }
+            const mappedProducts = mapProductList(productList);
+            setProducts(mappedProducts);
+            setProductQuantity(productList?.length || 0);
+
+        } else {
+            const from = (page - 1) * rowsPerPage;
+            const to = from + rowsPerPage - 1;
+        
+            let { data: productList, error, count } = await supabase
+                .from('products')
+                .select('*', { count: 'exact' })
+                .range(from, to)
+                .order('created_at', { ascending: false });        
+        
+            if (error) {
+                toast.error('Error getting products');
+                return;
+            }
+            const mappedProducts = mapProductList(productList);
+            setProducts(mappedProducts);
+            setProductQuantity(count || 0);
+        }
+
+        setLoading(false);
+    }, [page, rowsPerPage]);
+    
+    const deleteProduct = async (product: Product) => {
+        const pathImagesInBucket = product.imagesSrc.map(imageSrc => imageSrc.split('/').pop());
+
+        if (product.imagesSrc?.length !== 0 && pathImagesInBucket?.length !== 0) {
+            const { data, error } = await supabase
+                .storage
+                .from(NAME_BUCKET_IMAGES)
+                .remove([...pathImagesInBucket as string[]]);
+
+            if (error) {
+                toast.error(`Error deleting files:  ${error.message}`);
+                return;
+            }
+
+        }
+
+        const { error } = await supabase
+            .from('products')
+            .delete()
+            .eq('id', product.id);
+
+        
         if (error) {
-            toast.error('Error fetching products');
+            toast.error('Error deleting product');
             return;
         }
 
-        setProducts(mapProductList(productList));
-        setLoading(false);
-        setTotalProducts(count || 0);
-    };
-
-    const handlePageChange = (newPage: number) => {
-        console.log('newPage', newPage);
-        setPage(newPage);
-    };
-    
-    useEffect(() => {
-        getProducts();
-    }, [page]);
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen bg-background">
-                <Spinner label="Loading..." color="success" labelColor="success" />
-            </div>
-        );
+        toast.success('Product deleted successfully');
+        getProducts(debouncedSearchTerm);
     }
 
-    console.log('products', products);
+    useEffect(() => {
+        getProducts(debouncedSearchTerm);
+    }, [page, debouncedSearchTerm, getProducts]);
+    
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+    };
 
     return (
-        <>
-            {
-                products?.length === 0 ? 
-                (
-                    <div className="bg-white">
-                        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-                            <h2 className="text-2xl font-bold tracking-tight text-gray-500">
-                                Productos
-                            </h2>
-                            <p className="text-gray-500 text-lg mt-4">
-                                No hay productos disponibles
-                            </p>
+        <div className="bg-white">
+            <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+            <div className="flex items-center justify-between pb-6">
+                    <h2 className="text-2xl font-bold tracking-tight text-gray-500">
+                        Products
+                    </h2>
+                    <Link
+                        href="/dashboard/products/create"
+                        className="border border-gray-400 text-gray-500 px-4 py-1 rounded-md hover:bg-gray-500 hover:text-white text-[18px]"
+                    >
+                        Add Product
+                    </Link>
+                </div>
+                <div className="pb-6">
+                    <Input
+                        fullWidth
+                        size="lg"
+                        placeholder="Search product by name..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                </div>
+                {
+                    loading ?
+                    (
+                        <div className="flex items-center justify-center bg-background">
+                            <Spinner label="Loading..." color="success" labelColor="success" />
                         </div>
-                    </div>
-                ) : 
-                (
-                <div className="bg-white">
-                    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-                        <h2 className="text-2xl font-bold tracking-tight text-gray-500 pb-6">
-                            Productos
-
-                            <Link
-                                href="/dashboard/products/create"
-                                className="float-right border border-gray-400 text-gray-500 px-4 py-1 rounded-md hover:bg-gray-500 hover:text-white text-[18px]"
-                            >
-                                Add Product
-                            </Link>
-
-                        </h2>
-                        <Table 
-                            aria-label="Table with product information"
-                            bottomContent={
-                                <div className="flex w-full justify-center">
-                                    <Pagination
-                                    isCompact
-                                    showControls
-                                    showShadow
-                                        total={Math.ceil(totalProducts / rowsPerPage)}
-                                        initialPage={1} 
-                                        page={page}
-                                        color="secondary"
-                                        onChange={(newPage) => handlePageChange(newPage)}
-                                    />
-                                </div>
-                            }>
-                            <TableHeader>
-                                <TableColumn>ID</TableColumn>
-                                <TableColumn>NAME</TableColumn>
-                                <TableColumn>PRICE</TableColumn>
-                                <TableColumn>DISCOUNT</TableColumn>
-                                <TableColumn>NEW PRICE</TableColumn>
-                                {/* <TableColumn>COLORS</TableColumn>
-                                <TableColumn>SIZES</TableColumn> */}
-                                <TableColumn>CATEGORY</TableColumn>
-                                <TableColumn>IS AVAILABLE</TableColumn>
-                                <TableColumn>COMING SOON</TableColumn>
-                                <TableColumn>CREATE AT</TableColumn>
-                                <TableColumn>ACTIONS</TableColumn>
-                            </TableHeader>
-                            <TableBody>
-                                {products?.map((product: Product, index: number) => (
-                                        product && (
-                                            <TableRow key={index}>
-                                                <TableCell>{product.id}</TableCell>
-                                                <TableCell>{product?.name}</TableCell>
-                                                <TableCell>{formatPrice(product?.price)}</TableCell>
-                                                <TableCell>{formatDiscount(product?.discount)}</TableCell>
-                                                <TableCell>{formatPrice(product?.newPrice)}</TableCell>
-                                                {/* <TableCell>{product?.colors?.join(', ')}</TableCell>
-                                                <TableCell>{product?.sizes?.join(', ')}</TableCell> */}
-                                                <TableCell>{capitalizeFirstLetter(product?.category)}</TableCell>
-                                                <TableCell>{product?.isAvailable ? <Chip color="success" size="sm" variant="flat">Yes</Chip> : <Chip color="danger" size="sm" variant="flat">No</Chip>}</TableCell>
-                                                <TableCell>{product?.isComingSoon ? <Chip color="success" size="sm" variant="flat">Yes</Chip> : <Chip color="warning" size="sm" variant="flat">No</Chip>}</TableCell>
-                                                <TableCell>{formatDate(product?.createdAt)}</TableCell>
-                                                <TableCell>
-                                                    <div className="relative flex items-center gap-2">
-                                                        <Tooltip content="Edit user">
-                                                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                                                <EditIcon />
-                                                            </span>
-                                                        </Tooltip>
-                                                        <Tooltip color="danger" content="Delete user">
-                                                            <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                                                                <DeleteIcon />
-                                                            </span>
-                                                        </Tooltip>
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        )
-                                    ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </div> 
-                )
-            }
-        </>
+                    ) : 
+                    productQuantity === 0 ? 
+                    (
+                        <div className="flex items-center justify-center bg-background">
+                            <p className="text-gray-500 text-lg">No products found</p>
+                        </div>
+                    ) :
+                    (
+                        <ProductTable 
+                            products={products} 
+                            totalProducts={productQuantity}
+                            page={page}
+                            rowsPerPage={rowsPerPage}
+                            shouldHidePagination={debouncedSearchTerm !== ''}
+                            handlePageChange={handlePageChange}
+                        />
+                    )
+                }
+            </div>
+        </div>
     );
 }
-
-export const EditIcon = (props: any) => (
-    <svg
-      aria-hidden="true"
-      fill="none"
-      focusable="false"
-      height="1em"
-      role="presentation"
-      viewBox="0 0 20 20"
-      width="1em"
-      {...props}
-    >
-      <path
-        d="M11.05 3.00002L4.20835 10.2417C3.95002 10.5167 3.70002 11.0584 3.65002 11.4334L3.34169 14.1334C3.23335 15.1084 3.93335 15.775 4.90002 15.6084L7.58335 15.15C7.95835 15.0834 8.48335 14.8084 8.74168 14.525L15.5834 7.28335C16.7667 6.03335 17.3 4.60835 15.4583 2.86668C13.625 1.14168 12.2334 1.75002 11.05 3.00002Z"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeMiterlimit={10}
-        strokeWidth={1.5}
-      />
-      <path
-        d="M9.90833 4.20831C10.2667 6.50831 12.1333 8.26665 14.45 8.49998"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeMiterlimit={10}
-        strokeWidth={1.5}
-      />
-      <path
-        d="M2.5 18.3333H17.5"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeMiterlimit={10}
-        strokeWidth={1.5}
-      />
-    </svg>
-);
-
-export const DeleteIcon = (props: any) => (
-    <svg
-      aria-hidden="true"
-      fill="none"
-      focusable="false"
-      height="1em"
-      role="presentation"
-      viewBox="0 0 20 20"
-      width="1em"
-      {...props}
-    >
-      <path
-        d="M17.5 4.98332C14.725 4.70832 11.9333 4.56665 9.15 4.56665C7.5 4.56665 5.85 4.64998 4.2 4.81665L2.5 4.98332"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-      />
-      <path
-        d="M7.08331 4.14169L7.26665 3.05002C7.39998 2.25835 7.49998 1.66669 8.90831 1.66669H11.0916C12.5 1.66669 12.6083 2.29169 12.7333 3.05835L12.9166 4.14169"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-      />
-      <path
-        d="M15.7084 7.61664L15.1667 16.0083C15.075 17.3166 15 18.3333 12.675 18.3333H7.32502C5.00002 18.3333 4.92502 17.3166 4.83335 16.0083L4.29169 7.61664"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-      />
-      <path
-        d="M8.60834 13.75H11.3833"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-      />
-      <path
-        d="M7.91669 10.4167H12.0834"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-      />
-    </svg>
-);

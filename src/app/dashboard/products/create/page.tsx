@@ -13,8 +13,9 @@ import { category, color, size } from '@/interfaces';
 import { Product } from '@/interfaces/products';
 import { convertPhraseToSnakeCase } from '@/utils';
 import { Toaster, toast } from 'sonner';
+import { MAX_SIZE_IMAGE_IN_MB, NAME_BUCKET_IMAGES } from '@/constants';
 
-const Page = () => {
+export default function CreateProduct() {
 
     const [product, setProduct] = useState<Product>({
         id: '',
@@ -171,7 +172,7 @@ const Page = () => {
 
             const { data, error } = await supabase
             .storage
-            .from('images')
+            .from(NAME_BUCKET_IMAGES)
             .upload(fileName, fileImage, {
                 cacheControl: '36000',
                 upsert: false
@@ -190,7 +191,6 @@ const Page = () => {
             sourceImageFinal.push(urlImage);
 
             setUrlImages([...urlImages, urlImage]);
-
         }
 
         return sourceImageFinal;
@@ -219,19 +219,19 @@ const Page = () => {
 
     useEffect(() => {
         calculateNewPrice();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [product.price, product.discount]);
 
 
     const handleImages = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) return;
 
-        // maximo 2 MB por imagen
-        const maxSize = 2 * 1024 * 1024;
+        const maxSize = MAX_SIZE_IMAGE_IN_MB * 1024 * 1024;
 
         for (let i = 0; i < event.target.files.length; i++) {
             const file = event.target.files[i];
             if (file.size > maxSize) {
-                alert('El tamaño de la imagen debe ser inferior a 2MB');
+                alert(`The image size must be less than ${MAX_SIZE_IMAGE_IN_MB}MB`);
                 return;
             }
         }
@@ -298,8 +298,6 @@ const Page = () => {
                                 }
                             </Select>
                             
-							
-
 						</div>
 					</div>
 
@@ -470,7 +468,7 @@ const Page = () => {
 
                     <div className="flex flex-col gap-1 md:flex-row md:flex-wrap">
                         <label className="text-default-400 text-small ms-2">
-                            Images (máximo. 2MB)
+                            Images (max. {MAX_SIZE_IMAGE_IN_MB}MB)
                         </label>
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             {
@@ -637,5 +635,3 @@ const Page = () => {
 		</>
 	);
 };
-
-export default Page;
