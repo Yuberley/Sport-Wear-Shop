@@ -63,6 +63,9 @@ export default function Products() {
     const deleteProduct = async (product: Product) => {
         const pathImagesInBucket = product.imagesSrc.map(imageSrc => imageSrc.split('/').pop());
 
+        console.log("Product to remove: ", product);
+        console.log("Images to remove: ", pathImagesInBucket);
+
         if (product.imagesSrc?.length !== 0 && pathImagesInBucket?.length !== 0) {
             const { data, error } = await supabase
                 .storage
@@ -74,18 +77,20 @@ export default function Products() {
                 return;
             }
 
+            console.log("Files deleted: ", data);
         }
 
-        const { error } = await supabase
+        const { data: productRemoved, error } = await supabase
             .from('products')
             .delete()
             .eq('id', product.id);
 
-        
         if (error) {
             toast.error('Error deleting product');
             return;
         }
+
+        console.log("Product removed: ", productRemoved);
 
         toast.success('Product deleted successfully');
         getProducts(debouncedSearchTerm);

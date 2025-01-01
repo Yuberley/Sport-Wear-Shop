@@ -6,7 +6,7 @@ export const mapProduct = (product: any): Product => {
         name: product.name || '',
         description: product.description || '',
         price: product.price || 0,
-        discount: product.discount || 0,
+        discount: product.discount || '',
         newPrice: product.new_price || 0,
         colors: product.colors || [],
         sizes: product.sizes || [],
