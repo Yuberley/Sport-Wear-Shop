@@ -7,7 +7,7 @@ import SideNav from '@/components/dashboard/SideNav';
 
 export default function DashboardLayout({children}: Readonly<{children: React.ReactNode}>) {
     const router = useRouter();
-    const [loading, setLoading] = useState(true); // Estado para controlar la carga
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange(

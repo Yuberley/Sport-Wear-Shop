@@ -1,23 +1,21 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
 import { Product } from '@/interfaces/products';
 import { capitalizeFirstLetter } from '@/utils';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { formatDate, formatDiscount, formatPrice } from '@/utils/formatters';
-import { 
-  Tooltip, 
+import {
   Button, 
   Chip, 
   Pagination,
   Modal,
   ModalContent,
   ModalHeader,
-  ModalBody,
   ModalFooter,
   useDisclosure } from "@nextui-org/react";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { NAME_BUCKET_IMAGES } from '@/constants';
-
 
 const ProductTable = (
     { 
@@ -36,13 +34,11 @@ const ProductTable = (
         handlePageChange: (newPage: number) => void }) => 
     {
 
+    const [productToDelete, setProductToDelete] = useState<Product | null>(null);
     const {isOpen, onOpen, onClose} = useDisclosure();
 
     const deleteProduct = async (product: Product) => {
         const pathImagesInBucket = product.imagesSrc.map(imageSrc => imageSrc.split('/').pop());
-
-        console.log("Product to remove: ", product);
-        console.log("Images to remove: ", pathImagesInBucket);
 
         if (product.imagesSrc?.length !== 0 && pathImagesInBucket?.length !== 0) {
             const { data, error } = await supabase
@@ -54,8 +50,6 @@ const ProductTable = (
                 toast.error(`Error deleting files:  ${error.message}`);
                 return;
             }
-
-            console.log("Files deleted: ", data);
         }
 
         const { data: productRemoved, error } = await supabase
@@ -68,10 +62,21 @@ const ProductTable = (
             return;
         }
 
-        console.log("Product removed: ", productRemoved);
-
         toast.success('Product deleted successfully');
     }
+
+    const handleDelete = (product: Product) => {
+        setProductToDelete(product);
+        onOpen();
+    };
+
+    const confirmDelete = async () => {
+        if (productToDelete) {
+            await deleteProduct(productToDelete);
+            setProductToDelete(null);
+            onClose();
+        }
+    };
 
     return (
         <>
@@ -123,27 +128,21 @@ const ProductTable = (
                                     <TableCell>{formatDate(product?.createdAt)}</TableCell>
                                     <TableCell>
                                         <div className="relative flex items-center gap-2">
-                                            {/* <Tooltip content="Edit product">
-                                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                                    <EditIcon />
-                                                </span>
-                                            </Tooltip> */}
-                                            <Button
-                                                className='max-h-[28px] p-0 border border-primary'
-                                                content="Edit product">
-                                                <span className="text-lg text-primary cursor-pointer active:opacity-50">
-                                                    <EditIcon />
-                                                </span>
-                                            </Button>
-                                            <Button
-                                                // onClick={() => deleteProduct(product)}
-                                                onClick={onOpen}
-                                                className='max-h-[28px] p-0 border border-danger'
-                                                content="Delete product">
-                                                <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                                                    <DeleteIcon />
-                                                </span>
-                                            </Button>
+                                            <Link
+                                                // href={`/dashboard/products/create?productEditId=${product.id}`}
+                                                href={`#`}
+                                                className="text-lg text-primary cursor-pointer active:opacity-50 relative group mr-2">
+                                                <EditIcon />
+                                            </Link>
+                                            
+                                            <span
+                                                onClick={() => handleDelete(product)}
+                                                className="text-lg text-danger cursor-pointer active:opacity-50 relative group"
+                                                role="button"
+                                                aria-label="Delete product"
+                                            >
+                                                <DeleteIcon />
+                                            </span>
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -161,7 +160,7 @@ const ProductTable = (
                         <Button color="danger" variant="light" onPress={onClose}>
                             Cancel
                         </Button>
-                        <Button color="primary" onPress={onClose}>
+                        <Button color="primary" onPress={confirmDelete}>
                             Yes
                         </Button>
                     </ModalFooter>

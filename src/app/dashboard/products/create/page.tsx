@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation'
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
 import { Select, SelectItem } from '@nextui-org/select';
@@ -14,8 +15,12 @@ import { Product } from '@/interfaces/products';
 import { convertPhraseToSnakeCase } from '@/utils';
 import { Toaster, toast } from 'sonner';
 import { MAX_SIZE_IMAGE_IN_MB, NAME_BUCKET_IMAGES } from '@/constants';
+import { mapProduct } from '@/utils/mappers';
 
 export default function CreateProduct() {
+
+    const searchParams = useSearchParams()
+    const productEditId = searchParams.get('productEditId');
 
     const [product, setProduct] = useState<Product>({
         id: '',
@@ -91,6 +96,39 @@ export default function CreateProduct() {
         getSizes();
     }, []);
         
+    useEffect(() => {
+        if (productEditId) {
+
+            console.log('productEditId', productEditId);
+
+            getProduct(productEditId);
+        }
+    }, [productEditId]);
+
+
+    const getProduct = async (id: string) => {
+
+        let product: Product;
+
+        const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .eq('id', id)
+            .single()
+
+        if (error) {
+            toast.error('Error getting product',{
+                description: error.message,
+            });
+            return;
+        }
+
+        if (data) {
+            product = mapProduct(data);
+            console.log('product', product);
+            setProduct(product);
+        }
+    }
 
     const saveProduct =  () => {
         
