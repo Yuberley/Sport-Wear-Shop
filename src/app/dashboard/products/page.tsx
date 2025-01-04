@@ -8,7 +8,6 @@ import { mapProductList } from '@/utils/mappers';
 import Link from 'next/link';
 import useDebounce from '@/hooks/useDebunce';
 import ProductTable from '@/components/dashboard/ProductTable';
-import { NAME_BUCKET_IMAGES } from '@/constants';
 
 export default function Products() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -59,42 +58,6 @@ export default function Products() {
 
         setLoading(false);
     }, [page, rowsPerPage]);
-    
-    const deleteProduct = async (product: Product) => {
-        const pathImagesInBucket = product.imagesSrc.map(imageSrc => imageSrc.split('/').pop());
-
-        console.log("Product to remove: ", product);
-        console.log("Images to remove: ", pathImagesInBucket);
-
-        if (product.imagesSrc?.length !== 0 && pathImagesInBucket?.length !== 0) {
-            const { data, error } = await supabase
-                .storage
-                .from(NAME_BUCKET_IMAGES)
-                .remove([...pathImagesInBucket as string[]]);
-
-            if (error) {
-                toast.error(`Error deleting files:  ${error.message}`);
-                return;
-            }
-
-            console.log("Files deleted: ", data);
-        }
-
-        const { data: productRemoved, error } = await supabase
-            .from('products')
-            .delete()
-            .eq('id', product.id);
-
-        if (error) {
-            toast.error('Error deleting product');
-            return;
-        }
-
-        console.log("Product removed: ", productRemoved);
-
-        toast.success('Product deleted successfully');
-        getProducts(debouncedSearchTerm);
-    }
 
     useEffect(() => {
         getProducts(debouncedSearchTerm);

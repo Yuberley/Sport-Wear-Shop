@@ -103,10 +103,8 @@ const ProductTable = (
                     <TableColumn>PRICE</TableColumn>
                     <TableColumn>DISCOUNT</TableColumn>
                     <TableColumn>NEW PRICE</TableColumn>
-                    {/* <TableColumn>COLORS</TableColumn>
-                    <TableColumn>SIZES</TableColumn> */}
                     <TableColumn>CATEGORY</TableColumn>
-                    <TableColumn>IS AVAILABLE</TableColumn>
+                    <TableColumn>AVAILABLE</TableColumn>
                     <TableColumn>COMING SOON</TableColumn>
                     <TableColumn>CREATE AT</TableColumn>
                     <TableColumn>ACTIONS</TableColumn>
@@ -120,8 +118,6 @@ const ProductTable = (
                                     <TableCell>{formatPrice(product?.price)}</TableCell>
                                     <TableCell>{formatDiscount(product?.discount)}</TableCell>
                                     <TableCell>{formatPrice(product?.newPrice)}</TableCell>
-                                    {/* <TableCell>{product?.colors?.join(', ')}</TableCell>
-                                    <TableCell>{product?.sizes?.join(', ')}</TableCell> */}
                                     <TableCell>{capitalizeFirstLetter(product?.category)}</TableCell>
                                     <TableCell>{product?.isAvailable ? <Chip color="success" size="sm" variant="flat">Yes</Chip> : <Chip color="danger" size="sm" variant="flat">No</Chip>}</TableCell>
                                     <TableCell>{product?.isComingSoon ? <Chip color="success" size="sm" variant="flat">Yes</Chip> : <Chip color="warning" size="sm" variant="flat">No</Chip>}</TableCell>

@@ -7,11 +7,9 @@ import Image from 'next/image';
 import { Divider } from "@nextui-org/divider";
 
 import { FaShoppingBag } from "react-icons/fa";
-import { IoAddCircleOutline } from "react-icons/io5";
-import { IoAddCircleSharp } from "react-icons/io5";
+import { CgSize } from "react-icons/cg";
 import { IoIosColorPalette } from "react-icons/io";
 import { FaTableList } from "react-icons/fa6";
-import { FaShop } from "react-icons/fa6";
 
 
 const SideNav = () => {
@@ -53,11 +51,8 @@ const SideNav = () => {
                     <Link href="/dashboard/products" className="flex items-center gap-2 p-2 hover:bg-gray-700 rounded-md">
                         <FaShoppingBag /> {isOpen && <span className="text-white">Products</span>}
                     </Link>
-                    <Link href="/dashboard/categories" className="flex items-center gap-2 p-2 hover:bg-gray-700 rounded-md">
-                        <FaTableList /> {isOpen && <span className="text-white">Categories</span>}
-                    </Link>
-                    <Link href="/dashboard/colors" className="flex items-center gap-2 p-2 hover:bg-gray-700 rounded-md">
-                        <IoIosColorPalette /> {isOpen && <span className="text-white">Colors</span>}
+                    <Link href="/dashboard/configurations" className="flex items-center gap-2 p-2 hover:bg-gray-700 rounded-md">
+                        <FaTableList /> {isOpen && <span className="text-white">Configuraciones</span>}
                     </Link>
                 </div>
                 <div className="flex flex-col gap-2 mb-16">
