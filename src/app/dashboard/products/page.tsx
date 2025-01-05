@@ -98,8 +98,9 @@ export default function Products() {
                 {
                     loading ?
                     (
-                        <div className="flex items-center justify-center bg-background">
-                            <Spinner label="Loading..." color="success" labelColor="success" />
+                        <div className="flex justify-center items-center">
+                            <Spinner />
+                            <span className="ml-2">Loading products...</span>
                         </div>
                     ) : 
                     productQuantity === 0 ? 
