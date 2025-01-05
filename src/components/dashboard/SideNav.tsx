@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation'; // Usamos usePathname de next/navigation
 import { FaSignOutAlt, FaBars, FaShoppingBag } from 'react-icons/fa';
 import { FaTableList } from 'react-icons/fa6';
 import { Button } from '@nextui-org/button';
@@ -9,11 +10,15 @@ import { supabase } from '@/lib/supabase/initSupabase';
 
 const SideNav = () => {
 	const [isOpen, setIsOpen] = useState(true);
+	const pathname = usePathname(); // Usamos usePathname para obtener la ruta actual
 
 	const handleLogout = async () => {
 		const { error } = await supabase.auth.signOut();
 		console.log(error);
 	};
+
+	// Función para verificar si una ruta está activa
+	const isActive = (path: string) => pathname === path;
 
 	return (
 		<div
@@ -48,7 +53,11 @@ const SideNav = () => {
 				<div className="flex flex-col gap-4 mt-6">
 					<Link
 						href="/dashboard/products"
-						className="flex items-center gap-4 p-2 hover:bg-gray-700 rounded-lg transition-colors"
+						className={`flex items-center gap-4 p-2 rounded-lg transition-colors ${
+							isActive('/dashboard/products')
+								? 'bg-gray-700 text-white font-bold'
+								: 'hover:bg-gray-700 text-gray-300'
+						}`}
 					>
 						<FaShoppingBag size={20} />
 						{isOpen && (
@@ -58,7 +67,11 @@ const SideNav = () => {
 
 					<Link
 						href="/dashboard/configurations"
-						className="flex items-center gap-4 p-2 hover:bg-gray-700 rounded-lg transition-colors"
+						className={`flex items-center gap-4 p-2 rounded-lg transition-colors ${
+							isActive('/dashboard/configurations')
+								? 'bg-gray-700 text-white font-bold'
+								: 'hover:bg-gray-700 text-gray-300'
+						}`}
 					>
 						<FaTableList size={20} />
 						{isOpen && (
