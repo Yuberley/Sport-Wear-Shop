@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { replaceSpacesWithDashes } from '@/utils';
 import LogoYLSPORT from './../../public/logo_ylsport.jpg';
-import { category } from '@/interfaces';
+import { Category } from '@/interfaces';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
@@ -20,7 +20,7 @@ function classNames(...classes: (string | boolean | null | undefined)[]) {
 export default function Header() {
 
     const router = useRouter();
-    const [categories, setCategories] = useState<category[]>([])
+    const [categories, setCategories] = useState<Category[]>([])
 
     const getCategories = async () => {
         const { data, error } = await supabase

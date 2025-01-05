@@ -81,9 +81,9 @@ export default function Products() {
                     </h2>
                     <Link
                         href="/dashboard/products/create"
-                        className="border border-gray-400 text-gray-500 px-4 py-1 rounded-md hover:bg-gray-500 hover:text-white text-[18px]"
+                        className="text-sm bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition"
                     >
-                        Add Product
+                        + Add Product
                     </Link>
                 </div>
                 <div className="pb-6">

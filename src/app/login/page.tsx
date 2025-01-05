@@ -24,7 +24,7 @@ export default function Login({
             async (event: any, session: any) => {
                 if (session) {
                     setLoadingPage(false);
-                    router.push('/dashboard');
+                    router.push('/dashboard/products');
                 }
             }
         );
@@ -58,7 +58,7 @@ export default function Login({
             return redirect("/login?message=Could not authenticate user");
         }
 
-        return redirect("/dashboard");
+        return redirect("/dashboard/products");
     };
 
     if (searchParams?.message) {

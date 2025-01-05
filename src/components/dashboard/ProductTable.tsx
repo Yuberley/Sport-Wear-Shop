@@ -92,7 +92,6 @@ const ProductTable = (
                             total={Math.ceil(totalProducts / rowsPerPage)}
                             initialPage={1} 
                             page={page}
-                            color="secondary"
                             onChange={(newPage) => handlePageChange(newPage)}
                         />
                     </div>

@@ -4,7 +4,7 @@ import ProducDetailsSkeleton from "@/skeletons";
 import { Product } from '@/interfaces/products';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { mapProduct } from '@/utils/mappers';
-import { color } from '@/interfaces';
+import { Color } from '@/interfaces';
 import { cookies } from "next/headers";
 
 interface PageProps {
@@ -51,7 +51,7 @@ export default async function Page({ searchParams }: PageProps) {
         return productNotFound;
     };
 
-    let colorsSource: color[] = [];
+    let colorsSource: Color[] = [];
     let sizesSource: string[] = [];
 
     const { data: colorsData, error: colorsError } = await supabase

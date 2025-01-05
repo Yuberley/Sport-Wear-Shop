@@ -10,7 +10,7 @@ import { Spinner } from '@nextui-org/spinner';
 import { Image } from "@nextui-org/react";
 import { supabase } from '@/lib/supabase/initSupabase';
 import { SUPABASE_URL } from '@/environment';
-import { category, color, size } from '@/interfaces';
+import { Category, Color, Size } from '@/interfaces';
 import { Product } from '@/interfaces/products';
 import { convertPhraseToSnakeCase } from '@/utils';
 import { Toaster, toast } from 'sonner';
@@ -41,9 +41,9 @@ export default function CreateProduct() {
     const [loadingSaveProduct, setLoadingSaveProduct] = useState<boolean>(false);
     const [urlImages, setUrlImages] = useState<string[]>([]);
     const [localImages, setLocalImages] = useState<File[]>([]);
-    const [categories, setCategories] = useState<category[]>([]);
-    const [colors, setColors] = useState<color[]>([]);
-    const [sizes, setSizes] = useState<size[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [colors, setColors] = useState<Color[]>([]);
+    const [sizes, setSizes] = useState<Size[]>([]);
 
     const getCategories = async () => {
         let { data: types_categories, error } = await supabase
@@ -57,7 +57,7 @@ export default function CreateProduct() {
             return;
         }
 
-        setCategories(types_categories as category[]);
+        setCategories(types_categories as Category[]);
     }
 
     const getColors = async () => {
@@ -72,7 +72,7 @@ export default function CreateProduct() {
             return;
         }
 
-        setColors(types_colors as color[]);
+        setColors(types_colors as Color[]);
     }
 
     const getSizes = async () => {
@@ -87,7 +87,7 @@ export default function CreateProduct() {
             return;
         }
 
-        setSizes(types_sizes as size[]);
+        setSizes(types_sizes as Size[]);
     }
 
     useEffect( () => {
@@ -98,9 +98,6 @@ export default function CreateProduct() {
         
     useEffect(() => {
         if (productEditId) {
-
-            console.log('productEditId', productEditId);
-
             getProduct(productEditId);
         }
     }, [productEditId]);
@@ -125,7 +122,6 @@ export default function CreateProduct() {
 
         if (data) {
             product = mapProduct(data);
-            console.log('product', product);
             setProduct(product);
         }
     }

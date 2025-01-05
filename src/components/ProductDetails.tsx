@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { RadioGroup } from '@headlessui/react';
 import { Product } from '@/interfaces/products';
-import { color } from '@/interfaces';
+import { Color } from '@/interfaces';
 import {
     usePathname,
 } from 'next/navigation';
@@ -23,7 +23,7 @@ const ProductDetails = ({
     sizesSource 
 }: { 
     product: Product, 
-    colorsSource: color[], 
+    colorsSource: Color[], 
     sizesSource: string[] 
 }) => {
 
