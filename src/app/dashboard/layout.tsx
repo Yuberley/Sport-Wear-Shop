@@ -8,6 +8,7 @@ import SideNav from '@/components/dashboard/SideNav';
 export default function DashboardLayout({children}: Readonly<{children: React.ReactNode}>) {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
+	const [sideNavOpen, setSideNavOpen] = useState(true); // Nuevo estado
 
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -35,8 +36,10 @@ export default function DashboardLayout({children}: Readonly<{children: React.Re
 
     return (
         <main>
-            <SideNav />
-            <div className="flex-1 p-4 ml-64">
+            <SideNav onToggle={setSideNavOpen} />
+            <div className={`flex-1 p-4 transition-all duration-300 ${
+					sideNavOpen ? 'ml-60' : 'ml-20'
+				}`}>
                 {children}
             </div>
         </main>

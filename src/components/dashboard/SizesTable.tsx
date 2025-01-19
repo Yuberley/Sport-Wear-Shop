@@ -1,14 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
-import {
-    Button, 
-    Chip, 
-    Pagination,
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    useDisclosure } from "@nextui-org/react";
+import { Pagination } from "@nextui-org/react";
 import { 
     Table, 
     TableHeader, 
@@ -17,6 +8,9 @@ import {
     TableRow, 
     TableCell } from "@nextui-org/table";
 import { Size } from '@/interfaces';
+import { toast, Toaster } from 'sonner';
+import { DeleteIcon } from '../icons/DeleteIcons';
+import { EditIcon } from '../icons/EditIcon';
 
 const SizesTable = (
     { 
@@ -38,10 +32,11 @@ const SizesTable = (
         const end = start + rowsPerPage;
     
         return sizes.slice(start, end);
-      }, [page, rowsPerPage, sizes]);
+    }, [page, rowsPerPage, sizes]);
 
     return (
         <Table
+            aria-labelledby='Sizes Table'
             bottomContent={
                 <Pagination
                     total={pages}
@@ -55,19 +50,32 @@ const SizesTable = (
             }
         >
             <TableHeader>
-                <TableColumn>ID</TableColumn>
                 <TableColumn>Value</TableColumn>
                 <TableColumn>Actions</TableColumn>
             </TableHeader>
             <TableBody>
                 {items.map( (size, index) => (
                     <TableRow key={index}>
-                        <TableCell>{size.id}</TableCell>
                         <TableCell>{size.value}</TableCell>
-                        <TableCell>
-                            <Link href={`/dashboard/sizes/${size.id}`}>
-                                <Button size='sm'> Edit </Button>
-                            </Link>
+                        <TableCell style={{ maxWidth: '50px', maxHeight: '50px' }}>
+                            <div className="relative flex items-center gap-2">    
+                                <span
+                                    onClick={() => console.log('Edit size')}
+                                    className="text-lg text-primary cursor-pointer active:opacity-50 relative group"
+                                    role="button"
+                                    aria-label="Edit product"
+                                    >
+                                    <EditIcon />
+                                </span>                            
+                                <span
+                                    onClick={() => console.log('Delete size')}
+                                    className="text-lg text-danger cursor-pointer active:opacity-50 relative group"
+                                    role="button"
+                                    aria-label="Delete product"
+                                >
+                                    <DeleteIcon />
+                                </span>
+                            </div>
                         </TableCell>
                     </TableRow>
                 ))}

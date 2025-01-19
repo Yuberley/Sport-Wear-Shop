@@ -1,9 +1,9 @@
 'use client';
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import { supabase } from '@/lib/supabase/initSupabase';
-import { Spinner, Button, Divider, Card } from '@nextui-org/react';
+import { Spinner, Button, Card } from '@nextui-org/react';
 import { CgSize } from 'react-icons/cg';
 import { IoIosColorPalette } from 'react-icons/io';
 import { FaTableList } from 'react-icons/fa6';
@@ -109,7 +109,7 @@ export default function Configurations() {
 							<CgSize /> Sizes
 						</h2>
 						<Link href="/dashboard/sizes/new">
-							<Button color="primary">Add Size</Button>
+							<Button size='sm' color="primary">+ New</Button>
 						</Link>
 					</div>
 					{loading.sizes ? (
@@ -123,7 +123,7 @@ export default function Configurations() {
 						<SizesTable
 							sizes={sizes}
 							totalSizes={itemsQuantity.sizes}
-							rowsPerPage={5}
+							rowsPerPage={6}
 						/>
 					)}
 				</Card>
@@ -134,7 +134,7 @@ export default function Configurations() {
 							<IoIosColorPalette /> Colors
 						</h2>
 						<Link href="/dashboard/colors/new">
-							<Button color="primary">Add Color</Button>
+							<Button size='sm' color="primary">+ New</Button>
 						</Link>
 					</div>
 					{loading.colors ? (
@@ -148,7 +148,7 @@ export default function Configurations() {
 						<ColorsTable
 							colors={colors}
 							totalColors={itemsQuantity.colors}
-							rowsPerPage={5}
+							rowsPerPage={6}
 						/>
 					)}
 				</Card>
@@ -159,7 +159,7 @@ export default function Configurations() {
 							<FaTableList /> Categories
 						</h2>
 						<Link href="/dashboard/categories/new">
-							<Button color="primary">Add Category</Button>
+							<Button size='sm' color="primary">+ New</Button>
 						</Link>
 					</div>
 					{loading.categories ? (
@@ -172,8 +172,9 @@ export default function Configurations() {
 					) : (
 						<CategoriesTable
 							categories={categories}
+							setCategories={setCategories}
 							totalCategories={itemsQuantity.categories}
-							rowsPerPage={5}
+							rowsPerPage={6}
 						/>
 					)}
 				</Card>

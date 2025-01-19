@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // Usamos usePathname de next/navigation
+import { toast, Toaster } from 'sonner';
+import { usePathname } from 'next/navigation';
 import { FaSignOutAlt, FaBars, FaShoppingBag } from 'react-icons/fa';
 import { FaTableList } from 'react-icons/fa6';
 import { Button } from '@nextui-org/button';
@@ -8,33 +9,40 @@ import Image from 'next/image';
 import { Divider } from '@nextui-org/divider';
 import { supabase } from '@/lib/supabase/initSupabase';
 
-const SideNav = () => {
+const SideNav = ({ onToggle }: { onToggle: (isOpen: boolean) => void }) => {
 	const [isOpen, setIsOpen] = useState(true);
-	const pathname = usePathname(); // Usamos usePathname para obtener la ruta actual
+	const pathname = usePathname();
 
 	const handleLogout = async () => {
 		const { error } = await supabase.auth.signOut();
-		console.log(error);
+		if (error) {
+			toast.error('Error logging out');
+		}
 	};
 
-	// Función para verificar si una ruta está activa
 	const isActive = (path: string) => pathname === path;
+
+	const toggleMenu = () => {
+		const newState = !isOpen;
+		setIsOpen(newState);
+		onToggle(newState);
+	};
 
 	return (
 		<div
 			className={`fixed top-0 left-0 h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white p-4 shadow-lg transition-all duration-300 ${
-				isOpen ? 'w-64' : 'w-20'
+				isOpen ? 'w-60' : 'w-[68px]'
 			}`}
 		>
 			<button
 				className="text-white mb-4 focus:outline-none hover:text-gray-300 transition"
-				onClick={() => setIsOpen(!isOpen)}
+				onClick={toggleMenu}
 			>
 				<FaBars size={24} />
 			</button>
-
+			<Toaster richColors />
 			<div
-				className={`flex items-center gap-2 mb-6 justify-center ${
+				className={`flex items-center gap-2 mb-6 justify-center mt-6 ${
 					isOpen ? 'opacity-100' : 'opacity-0 hidden'
 				} transition-all`}
 			>
@@ -80,7 +88,7 @@ const SideNav = () => {
 					</Link>
 				</div>
 
-				<div className="flex flex-col gap-2 mb-28">
+				<div className="flex flex-col gap-2 mb-32">
 					<Button
 						onClick={handleLogout}
 						className={`flex items-center gap-4 bg-gray-500 hover:bg-gray-600 rounded-lg p-2 shadow-md transition-colors  ${

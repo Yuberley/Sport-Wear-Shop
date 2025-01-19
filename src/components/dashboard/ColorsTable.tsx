@@ -1,14 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
-import {
-    Button, 
-    Chip, 
-    Pagination,
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    useDisclosure } from "@nextui-org/react";
+import { Pagination } from "@nextui-org/react";
 import { 
     Table, 
     TableHeader, 
@@ -17,6 +8,10 @@ import {
     TableRow, 
     TableCell } from "@nextui-org/table";
 import { Color } from '@/interfaces';
+import { toast, Toaster } from 'sonner';
+import { capitalizeFirstLetter } from '@/utils';
+import { EditIcon } from '../icons/EditIcon';
+import { DeleteIcon } from '../icons/DeleteIcons';
 
 const ColorsTable = (
         { 
@@ -38,10 +33,11 @@ const ColorsTable = (
         const end = start + rowsPerPage;
     
         return colors.slice(start, end);
-      }, [page, rowsPerPage, colors]);
+    }, [page, rowsPerPage, colors]);
 
     return (
         <Table
+            aria-labelledby='Colors Table'
             bottomContent={
                 <Pagination
                     total={pages}
@@ -55,31 +51,43 @@ const ColorsTable = (
             }
             >
             <TableHeader>
-                <TableColumn>ID</TableColumn>
                 <TableColumn>Name</TableColumn>
-                <TableColumn>View Color</TableColumn>
+                <TableColumn>Color</TableColumn>
                 <TableColumn>Actions</TableColumn>
             </TableHeader>
             <TableBody>
                 {items.map( (color, index) => (
                     <TableRow key={index}>
-                        <TableCell>{color.id}</TableCell>
-                        <TableCell>{color.name}</TableCell>
+                        <TableCell>{capitalizeFirstLetter(color.name)}</TableCell>
                         <TableCell>
-                        <div
-                            style={{
-                                width: '70px',
-                                height: '25px',
-                                backgroundColor: color.value,
-                                borderRadius: '8px', // Ajusta el valor según tus necesidades
-                            }}
-                        ></div>
-
+                            <div
+                                style={{
+                                    width: '70px',
+                                    height: '20px',
+                                    backgroundColor: color.value,
+                                    borderRadius: '8px',
+                                }}
+                            ></div>
                         </TableCell>
                         <TableCell>
-                            <Link href={`/dashboard/colors/${color.id}`}>
-                                <Button size='sm'> Edit </Button>
-                            </Link>
+                            <div className="relative flex items-center gap-2">    
+                                <span
+                                    onClick={() => console.log('Edit size')}
+                                    className="text-lg text-primary cursor-pointer active:opacity-50 relative group"
+                                    role="button"
+                                    aria-label="Edit product"
+                                    >
+                                    <EditIcon />
+                                </span>                            
+                                <span
+                                    onClick={() => console.log('Delete size')}
+                                    className="text-lg text-danger cursor-pointer active:opacity-50 relative group"
+                                    role="button"
+                                    aria-label="Delete product"
+                                >
+                                    <DeleteIcon />
+                                </span>
+                            </div>
                         </TableCell>
                     </TableRow>
                 ))}

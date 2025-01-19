@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from 'react';
 import { Product } from '@/interfaces/products';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { Spinner, Input } from "@nextui-org/react";
 import { mapProductList } from '@/utils/mappers';
@@ -59,13 +59,11 @@ export default function Products() {
         setLoading(false);
     }, [page, rowsPerPage]);
 
+    console.log('products');
+
     useEffect(() => {
         getProducts(debouncedSearchTerm);
-    }, [page, debouncedSearchTerm, getProducts]);
-    
-    const handlePageChange = (newPage: number) => {
-        setPage(newPage);
-    };
+    }, [page, debouncedSearchTerm, getProducts, setPage]);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -74,6 +72,7 @@ export default function Products() {
 
     return (
         <div className="bg-white">
+            <Toaster richColors />
             <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
             <div className="flex items-center justify-between pb-6">
                     <h2 className="text-2xl font-bold tracking-tight text-gray-500">
@@ -116,7 +115,7 @@ export default function Products() {
                             page={page}
                             rowsPerPage={rowsPerPage}
                             shouldHidePagination={debouncedSearchTerm !== ''}
-                            handlePageChange={handlePageChange}
+                            handlePageChange={setPage}
                         />
                     )
                 }
