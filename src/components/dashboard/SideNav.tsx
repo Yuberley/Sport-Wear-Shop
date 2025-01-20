@@ -4,6 +4,8 @@ import { toast, Toaster } from 'sonner';
 import { usePathname } from 'next/navigation';
 import { FaSignOutAlt, FaBars, FaShoppingBag } from 'react-icons/fa';
 import { FaTableList } from 'react-icons/fa6';
+import { SiHomeassistantcommunitystore } from "react-icons/si";
+import { BsFillFileEarmarkBarGraphFill } from "react-icons/bs";
 import { Button } from '@nextui-org/button';
 import Image from 'next/image';
 import { Divider } from '@nextui-org/divider';
@@ -59,6 +61,21 @@ const SideNav = ({ onToggle }: { onToggle: (isOpen: boolean) => void }) => {
 
 			<div className="flex flex-col justify-between h-full">
 				<div className="flex flex-col gap-4 mt-6">
+
+					{/* Home */}
+					<Link
+						href="/dashboard"
+						className={`flex items-center gap-4 p-2 rounded-lg transition-colors ${
+							isActive('/dashboard')
+								? 'bg-gray-700 text-white font-bold'
+								: 'hover:bg-gray-700 text-gray-300'
+						}`}
+					>
+						<SiHomeassistantcommunitystore size={20} />
+						{isOpen && <span className="text-white font-medium">Home</span>}
+					</Link>
+
+
 					<Link
 						href="/dashboard/products"
 						className={`flex items-center gap-4 p-2 rounded-lg transition-colors ${
@@ -86,6 +103,19 @@ const SideNav = ({ onToggle }: { onToggle: (isOpen: boolean) => void }) => {
 							<span className="text-white font-medium">Configurations</span>
 						)}
 					</Link>
+
+					<Link
+						href="#"
+						className={`flex items-center gap-4 p-2 rounded-lg transition-colors ${
+							isActive('/dashboard/reports')
+								? 'bg-gray-700 text-white font-bold'
+								: 'hover:bg-gray-700 text-gray-300'
+						}`}
+					>
+						<BsFillFileEarmarkBarGraphFill size={20} />
+						{isOpen && <span className="text-white font-medium">Reports</span>}
+					</Link>
+
 				</div>
 
 				<div className="flex flex-col gap-2 mb-32">

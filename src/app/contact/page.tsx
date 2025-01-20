@@ -1,7 +1,19 @@
+import { Metadata } from 'next';
 import instagram_logo from '../../../public/icons8-instagram-480.png';
 import whatsapp_logo from '../../../public/icons8-whatsapp-480.png';
 
 import Image from 'next/image';
+
+export const metadata: Metadata = {
+    title: "Contacto |YL SPORT",
+    description: "Encuentra la mejor ropa deportiva en YL SPORT. Contáctanos a través de nuestras redes sociales y conoce más sobre nuestros productos.",
+    applicationName: "YL SPORT",
+    generator: "YL SPORT",
+    keywords: ["Ropa deportiva", "Ropa", "Deportiva", "YL SPORT", "Gym", "Gimnasio", "Ejercicio", "Entrenamiento", "Fitness", "Moda", "Moda deportiva", "Moda fitness", "Moda gym"],
+    creator: "Yudilexy Guerrero",
+    publisher: "Yudilexy Guerrero",
+    authors: [{url: "https://www.instagram.com/yudig_209/", name:"Yudilexy Guerrero"}],
+};
 
 export default function Contact() {    
 

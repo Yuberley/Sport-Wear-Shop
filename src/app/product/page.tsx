@@ -6,6 +6,18 @@ import { supabase } from '@/lib/supabase/initSupabase';
 import { mapProduct } from '@/utils/mappers';
 import { Color } from '@/interfaces';
 import { cookies } from "next/headers";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "YL SPORT | Tu tienda de ropa deportiva",
+    description: "Los mejores precios y estilos. Encuentra la ropa que necesitas para tu entrenamiento en el gimnasio o al aire libre. Enterizos, tops, leggings, shorts, camisetas, tops y más. ¡Compra ya!",
+    applicationName: "YL SPORT",
+    generator: "YL SPORT",
+    keywords: ["Ropa deportiva", "Ropa", "Deportiva", "YL SPORT", "Gym", "Gimnasio", "Ejercicio", "Entrenamiento", "Fitness", "Moda", "Moda deportiva", "Moda fitness", "Moda gym"],
+    creator: "Yudilexy Guerrero",
+    publisher: "Yudilexy Guerrero",
+    authors: [{url: "https://www.instagram.com/yudig_209/", name:"Yudilexy Guerrero"}],
+};
 
 interface PageProps {
     searchParams?: {

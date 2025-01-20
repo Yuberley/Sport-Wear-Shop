@@ -14,7 +14,7 @@ export default function Products() {
     const [loading, setLoading] = useState(false);
     const [productQuantity, setProductQuantity] = useState(0);
     const [page, setPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(12);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState("");
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -92,6 +92,7 @@ export default function Products() {
                         placeholder="Search product by name..."
                         value={searchTerm}
                         onChange={handleSearchChange}
+                        onClear={() => setSearchTerm('')}
                     />
                 </div>
                 {
@@ -116,6 +117,7 @@ export default function Products() {
                             rowsPerPage={rowsPerPage}
                             shouldHidePagination={debouncedSearchTerm !== ''}
                             handlePageChange={setPage}
+                            handleRowsPerPageChange={setRowsPerPage}
                         />
                     )
                 }

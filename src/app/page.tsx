@@ -2,20 +2,22 @@ import { Suspense } from "react";
 import ListProducts from "@/components/ListProducts";
 import { ListProductsSkeleton } from "../skeletons";
 import { cookies } from "next/headers";
-import 'animate.css';
-
 import type { Metadata } from "next";
 import { Product } from "@/interfaces/products";
 import { mapProductList } from "@/utils/mappers";
 import { supabase } from "@/lib/supabase/initSupabase";
+import 'animate.css';
+
 
 export const metadata: Metadata = {
     title: "YL SPORT | Tu tienda de ropa deportiva",
-    description: "Tienda de ropa deportiva con los mejores precios y estilos",
+    description: "Los mejores precios y estilos. Encuentra la ropa que necesitas para tu entrenamiento en el gimnasio o al aire libre. Enterizos, tops, leggings, shorts, camisetas, tops y más. ¡Compra ya!",
     applicationName: "YL SPORT",
     generator: "YL SPORT",
     keywords: ["Ropa deportiva", "Ropa", "Deportiva", "YL SPORT", "Gym", "Gimnasio", "Ejercicio", "Entrenamiento", "Fitness", "Moda", "Moda deportiva", "Moda fitness", "Moda gym"],
     creator: "Yudilexy Guerrero",
+    publisher: "Yudilexy Guerrero",
+    authors: [{url: "https://www.instagram.com/yudig_209/", name:"Yudilexy Guerrero"}],
 };
 
 
@@ -23,9 +25,7 @@ export default async function Home() {
 
     const cookieStore = cookies();
 
-    // const columns = ['id', 'name', 'price', 'category', 'is_coming_soon'];
     const columns: (keyof Product)[] = ['id', 'name', 'price', 'category'];
-
 
     const products: Product[] = [];
     

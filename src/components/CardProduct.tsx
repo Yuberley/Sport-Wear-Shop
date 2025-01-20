@@ -54,11 +54,11 @@ const CardProduct = ({ product }: CardProductProps) => {
                         </h3>
                         <p className="text-sm font-medium text-gray-900">
                             {product.discount ? 
-                                <div className="flex flex-col">
+                                <span className="flex flex-col">
                                     <span className=" text-red-600 font-bold">{
                                     parseInt(product.newPrice).toLocaleString() + ' COP'}</span>
                                     <span className="line-through text-gray-400 font-normal text-[12px] flex justify-end mb-[-6px]">{parseInt(product.price).toLocaleString() + ' COP'}</span>
-                                </div>
+                                </span>
                                 : 
                                 <span className="text-green-600 font-semibold">{parseInt(product.price).toLocaleString() + ' COP'}</span>
                             }

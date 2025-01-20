@@ -5,6 +5,18 @@ import { ListProductsSkeleton } from '@/skeletons';
 import { mapProductList } from '@/utils/mappers';
 import React, { Suspense } from 'react'
 import { cookies } from "next/headers";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Promociones | YL SPORT",
+    description: "Encuentra la mejor ropa deportiva en YL SPORT. Contáctanos a través de nuestras redes sociales y conoce más sobre nuestros productos.",
+    applicationName: "YL SPORT",
+    generator: "YL SPORT",
+    keywords: ["Ropa deportiva", "Ropa", "Deportiva", "YL SPORT", "Gym", "Gimnasio", "Ejercicio", "Entrenamiento", "Fitness", "Moda", "Moda deportiva", "Moda fitness", "Moda gym"],
+    creator: "Yudilexy Guerrero",
+    publisher: "Yudilexy Guerrero",
+    authors: [{url: "https://www.instagram.com/yudig_209/", name:"Yudilexy Guerrero"}],
+};
 
 const Promotions = async () => {
 

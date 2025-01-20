@@ -8,7 +8,7 @@ import { Providers } from '@/app/providers';
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "YL SPORT | Tu tienda de ropa deportiva",
+    title: "Dashboard | YL SPORT",
     description: "Los mejores precios y estilos. Encuentra la ropa que necesitas para tu entrenamiento en el gimnasio o al aire libre. Enterizos, tops, leggings, shorts, camisetas, tops y más. ¡Compra ya!",
     applicationName: "YL SPORT",
     generator: "YL SPORT",
