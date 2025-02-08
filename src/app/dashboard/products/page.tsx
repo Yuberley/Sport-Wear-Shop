@@ -1,74 +1,82 @@
 "use client";
 import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Product } from '@/interfaces/products';
-import { toast, Toaster } from 'sonner';
-import { supabase } from '@/lib/supabase/initSupabase';
-import { Spinner, Input } from "@nextui-org/react";
-import { mapProductList } from '@/utils/mappers';
-import Link from 'next/link';
+import { Toaster } from 'sonner';
+import { Spinner, Button } from "@nextui-org/react";
 import useDebounce from '@/hooks/useDebunce';
 import ProductTable from '@/components/dashboard/ProductTable';
+import { PlusIcon } from '@/components/icons/PlusIcon';
+import { SerchProductsByName, GetProductsWithPagination, SearhProductById } from '@/lib/supabase/handleProducts';
 
 export default function Products() {
+    const router = useRouter();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
     const [productQuantity, setProductQuantity] = useState(0);
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTermId, setSearchTermId] = useState('');
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
+    const debouncedSearchTermId = useDebounce(searchTermId, 500);
 
-    const getProducts = useCallback(async (searchProductName?: string) => {
+    const getProducts = useCallback(async () => {
         setLoading(true);
 
-        if ( searchProductName && searchProductName.trim() !== '' ) {
-            let { data: productList, error } = await supabase
-                .from('products')
-                .select('*')
-                .textSearch('name', searchProductName, { 
-                    type: 'websearch'
-                });
-
-            if (error) {
-                toast.error('Error searching for products');
-                return;
-            }
-            const mappedProducts = mapProductList(productList);
-            setProducts(mappedProducts);
-            setProductQuantity(productList?.length || 0);
-
-        } else {
-            const from = (page - 1) * rowsPerPage;
-            const to = from + rowsPerPage - 1;
-        
-            let { data: productList, error, count } = await supabase
-                .from('products')
-                .select('*', { count: 'exact' })
-                .range(from, to)
-                .order('created_at', { ascending: false });        
-        
-            if (error) {
-                toast.error('Error getting products');
-                return;
-            }
-            const mappedProducts = mapProductList(productList);
-            setProducts(mappedProducts);
-            setProductQuantity(count || 0);
-        }
+        const { productList, count } = await GetProductsWithPagination(page, rowsPerPage);
+        setProducts(productList);
+        setProductQuantity(count || 0);
 
         setLoading(false);
     }, [page, rowsPerPage]);
 
-    console.log('products');
+    const getProductsByName = useCallback(async (searchProductName: string) => {
+        setLoading(true);
+
+        const productList = await SerchProductsByName(searchProductName);
+        setProducts(productList);
+        setProductQuantity(productList?.length || 0);
+
+        setLoading(false);
+    }, []);
+
+    const getProductById = useCallback(async (productId: string) => {
+        const product = await SearhProductById(productId);
+        
+        if (product) {
+            setProducts([product]);
+            setProductQuantity(1);
+        } else {
+            setProducts([]);
+            setProductQuantity(0);
+        }
+    }, []);
 
     useEffect(() => {
-        getProducts(debouncedSearchTerm);
-    }, [page, debouncedSearchTerm, getProducts, setPage]);
+        const hasSearchByName = Boolean(debouncedSearchTerm);
+        const hasSearchById = Boolean(debouncedSearchTermId);
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setSearchTerm(value);
-    };
+        if (hasSearchByName) {
+            getProductsByName(debouncedSearchTerm);
+            return;
+        } 
+
+        if (hasSearchById) {
+            getProductById(debouncedSearchTermId);
+            return;
+        }
+        
+        getProducts();
+    }, [
+        page,
+        debouncedSearchTerm,
+        debouncedSearchTermId,
+        getProductsByName,
+        getProductById,
+        getProducts,
+        setPage
+    ]);
 
     return (
         <div className="bg-white">
@@ -78,49 +86,27 @@ export default function Products() {
                     <h2 className="text-2xl font-bold tracking-tight text-gray-500">
                         Products
                     </h2>
-                    <Link
-                        href="/dashboard/products/create"
-                        className="text-sm bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition"
-                    >
-                        + Add Product
-                    </Link>
+                    <Button 
+                        color="primary"
+                        onClick={() => router.push('/dashboard/products/create')}
+                        endContent={<PlusIcon />}>
+                        Add New
+                    </Button>
                 </div>
-                <div className="pb-6">
-                    <Input
-                        fullWidth
-                        size="lg"
-                        placeholder="Search product by name..."
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        onClear={() => setSearchTerm('')}
-                    />
-                </div>
-                {
-                    loading ?
-                    (
-                        <div className="flex justify-center items-center">
-                            <Spinner />
-                            <span className="ml-2">Loading products...</span>
-                        </div>
-                    ) : 
-                    productQuantity === 0 ? 
-                    (
-                        <div className="flex items-center justify-center bg-background">
-                            <p className="text-gray-500 text-lg">No products found</p>
-                        </div>
-                    ) :
-                    (
-                        <ProductTable 
-                            products={products} 
-                            totalProducts={productQuantity}
-                            page={page}
-                            rowsPerPage={rowsPerPage}
-                            shouldHidePagination={debouncedSearchTerm !== ''}
-                            handlePageChange={setPage}
-                            handleRowsPerPageChange={setRowsPerPage}
-                        />
-                    )
-                }
+                <ProductTable 
+                    products={products} 
+                    totalProducts={productQuantity}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    shouldHidePagination={debouncedSearchTerm !== ''}
+                    searchTerm={searchTerm}
+                    searchTermId={searchTermId}
+                    isLoading={loading}
+                    handlePageChange={setPage}
+                    handleRowsPerPageChange={setRowsPerPage}
+                    handleSearchTerm={setSearchTerm}
+                    handleSearchTermId={setSearchTermId}
+                />
             </div>
         </div>
     );

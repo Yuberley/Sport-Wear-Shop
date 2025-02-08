@@ -1,10 +1,9 @@
 "use client"
 
 import { Card, CardBody, CardHeader } from "@nextui-org/card"
-import { Divider } from "@nextui-org/divider";
 import { FiPackage, FiDollarSign, FiShoppingCart  } from "react-icons/fi";
 
-import { Overview } from "@/components/dashboard/home/overview"
+import { Overview } from "@/components/dashboard/home/Overview"
 import { RecentSales } from "@/components/dashboard/home/RecentSales"
 import { CategoryBreakdown } from "@/components/dashboard/home/CategoryBreakdown"
 

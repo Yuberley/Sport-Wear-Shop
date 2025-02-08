@@ -4,6 +4,7 @@ import { Product } from '@/interfaces/products';
 import { capitalizeFirstLetter } from '@/utils';
 import { toast, Toaster } from 'sonner';
 import { supabase } from '@/lib/supabase/initSupabase';
+import { HiOutlineRefresh } from "react-icons/hi";
 import { formatDate, formatDiscount, formatPrice } from '@/utils/formatters';
 import {
   Button, 
@@ -14,18 +15,19 @@ import {
   ModalHeader,
   ModalFooter,
   useDisclosure, 
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Input} from "@nextui-org/react";
+//   Dropdown,
+//   DropdownTrigger,
+//   DropdownMenu,
+//   DropdownItem,
+  Input,
+  Spinner} from "@nextui-org/react";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { NAME_BUCKET_IMAGES } from '@/constants';
 import { DeleteIcon } from '../icons/DeleteIcons';
 import { EditIcon } from '../icons/EditIcon';
 import { SearchIcon } from '../icons/SearchIcon';
-import { ChevronDownIcon } from '../icons/ChevronDownIcon';
-import { PlusIcon } from '../icons/PlusIcon';
+import { LoadingContent } from '../LoadingContent';
+// import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 
 const ProductTable = (
     { 
@@ -34,23 +36,31 @@ const ProductTable = (
         page,
         rowsPerPage,
         shouldHidePagination,
+        searchTerm,
+        searchTermId,
+        isLoading,
         handlePageChange,
-        handleRowsPerPageChange
+        handleRowsPerPageChange,
+        handleSearchTerm,
+        handleSearchTermId,
     }: { 
         products: Product[], 
         totalProducts: number,
         page: number,
         rowsPerPage: number,
         shouldHidePagination: boolean,
+        searchTerm: string,
+        searchTermId: string,
+        isLoading: boolean,
         handlePageChange: (newPage: number) => void,
-        handleRowsPerPageChange: (newPage: number) => void }) => 
+        handleRowsPerPageChange: (newPage: number) => void,
+        handleSearchTerm: (searchTerm: string) => void,
+        handleSearchTermId: (searchTermId: string) => void }) => 
     {
 
     const [productToDelete, setProductToDelete] = useState<Product | null>(null);
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const [searchId, setSearchId] = useState<string>('');
-    const [searchName, setSearchName] = useState<string>('');
-    const [availabilityFilter, setAvailabilityFilter] = useState<Set<string>>(new Set(['all']));
+    // const [availabilityFilter, setAvailabilityFilter] = useState<Set<string>>(new Set(['all']));
     
 
     const startIndex = (page - 1) * rowsPerPage + 1;
@@ -107,21 +117,22 @@ const ProductTable = (
                         className="w-full sm:max-w-[75%]"
                         placeholder="Product name..."
                         startContent={<SearchIcon />}
-                        value={searchName}
-                        onClear={() => setSearchName('') }
-                        onValueChange={(value) => setSearchName(value)}
+                        value={searchTerm}
+                        onClear={() => handleSearchTerm('') }
+                        onValueChange={(value) => handleSearchTerm(value)}
                     />
                     <Input
                         isClearable
+                        type='number'
                         className="w-full sm:max-w-[25%]"
                         placeholder="Product ID..."
                         startContent={<SearchIcon />}
-                        value={searchId}
-                        onClear={() => setSearchId('') }
-                        onValueChange={(value) => setSearchId(value)}
+                        value={searchTermId.toString()}
+                        onValueChange={(value) => handleSearchTermId(value)}
+                        onClear={() => handleSearchTermId('')}
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                                     Available
@@ -141,10 +152,20 @@ const ProductTable = (
                                 <DropdownItem key="yes">Yes</DropdownItem>
                                 <DropdownItem key="no">No</DropdownItem>
                             </DropdownMenu>
-                        </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon />}>
-                            Add New
-                        </Button>
+                        </Dropdown> */}
+                        <div>    
+                            <Button
+                                color="primary"
+                                variant="light"
+                                onClick={() => {
+                                    handleSearchTerm('');
+                                    handleSearchTermId('');
+                                    // setAvailabilityFilter(new Set(['all']));
+                                }}
+                            >
+                                <HiOutlineRefresh />
+                            </Button>
+                        </div>   
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -167,13 +188,13 @@ const ProductTable = (
                 </div>
             </div>
         );
-    }, [searchName, searchId, availabilityFilter, totalProducts, rowsPerPage, handleRowsPerPageChange]);
+    }, [searchTerm, searchTermId, totalProducts, rowsPerPage, handleSearchTerm, handleSearchTermId, handleRowsPerPageChange]);
     
 
     return (
         <>
             <Toaster richColors />
-            <Table 
+            <Table
                 aria-label="Table with product information"
                 topContent={topContent}
                 bottomContent={
@@ -207,7 +228,12 @@ const ProductTable = (
                     <TableColumn>CREATE AT</TableColumn>
                     <TableColumn>ACTIONS</TableColumn>
                 </TableHeader>
-                <TableBody>
+                <TableBody 
+                    emptyContent="No products found" 
+                    items={products}
+                    loadingState={isLoading ? "loading" : "idle"}
+                    loadingContent={<LoadingContent message="Loading products..." />}
+                    >
                     {products?.map((product: Product, index: number) => (
                             product && (
                                 <TableRow key={index}>
