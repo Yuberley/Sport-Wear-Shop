@@ -12,7 +12,7 @@ export const SerchProductsByName = async (searchProductName: string): Promise<Pr
         });
 
     if (error) {
-        toast.error('Error searching for products');
+        toast.error(error?.details);
         return [];
     }
     
@@ -31,7 +31,7 @@ export const GetProductsWithPagination = async (page: number, rowsPerPage: numbe
         .order('created_at', { ascending: false });        
     
     if (error) {
-        toast.error('Error getting products');
+        toast.error(error?.details);
         return { productList: [], count: 0 };
     }
     const mappedProducts = mapProductList(productList);
@@ -47,7 +47,7 @@ export const SearhProductById = async (productId: string): Promise<Product | nul
         .single();
 
     if (error) {
-        toast.error('Error searching for product');
+        toast.warning(error?.details);
         return null;
     }
 
