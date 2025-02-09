@@ -1,29 +1,18 @@
 import React, { Suspense } from 'react';
 import ProductDetails from '@/components/ProductDetails';
-import ProducDetailsSkeleton from "@/skeletons";
+import ProducDetailsSkeleton from '@/skeletons';
 import { Product } from '@/interfaces/products';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { mapProduct } from '@/utils/mappers';
 import { Color } from '@/interfaces';
-import { cookies } from "next/headers";
 import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-    title: "YL SPORT | Tu tienda de ropa deportiva",
-    description: "Los mejores precios y estilos. Encuentra la ropa que necesitas para tu entrenamiento en el gimnasio o al aire libre. Enterizos, tops, leggings, shorts, camisetas, tops y más. ¡Compra ya!",
-    applicationName: "YL SPORT",
-    generator: "YL SPORT",
-    keywords: ["Ropa deportiva", "Ropa", "Deportiva", "YL SPORT", "Gym", "Gimnasio", "Ejercicio", "Entrenamiento", "Fitness", "Moda", "Moda deportiva", "Moda fitness", "Moda gym"],
-    creator: "Yudilexy Guerrero",
-    publisher: "Yudilexy Guerrero",
-    authors: [{url: "https://www.instagram.com/yudig_209/", name:"Yudilexy Guerrero"}],
-};
+import { BASE_URL_THIS_WEBSITE } from '@/constants';
 
 interface PageProps {
     searchParams?: {
         id: string;
         name: string;
-    }
+    };
 };
 
 const productNotFound = (
@@ -32,69 +21,84 @@ const productNotFound = (
     </p>
 );
 
-export default async function Page({ searchParams }: PageProps) {
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+    const { id = '' } = searchParams || {};
 
-    const cookieStore = cookies();
+    if (!id) {
+        return {
+            title: 'Producto no encontrado | YL SPORT',
+            description: 'No se encontró el producto solicitado.',
+            openGraph: {
+                title: 'Producto no encontrado | YL SPORT',
+                description: 'No se encontró el producto solicitado.',
+                type: 'website',
+                url: BASE_URL_THIS_WEBSITE,
+            },
+        };
+    }
 
-    const id = searchParams?.id?.toString() || '';
-    const name = searchParams?.name?.toString() || '';
-
-    if (!id || !name) {
-        return productNotFound;
-    };
-
-    let product: Product;
-
-    let { data, error } = await supabase
+    const { data: productData } = await supabase
         .from('products')
         .select('*')
         .eq('id', id)
-        .eq('is_available', true)
         .single();
 
-    if (error) {
-        console.error('Error fetching product', error);
-        return productNotFound;
-    }
-
-    product = mapProduct(data);
+    const product: Product = mapProduct(productData);
 
     if (!product) {
-        return productNotFound;
+        return {
+            title: 'Producto no encontrado | YL SPORT',
+            description: 'No se encontró el producto solicitado.',
+            openGraph: {
+                title: 'Producto no encontrado | YL SPORT',
+                description: 'No se encontró el producto solicitado.',
+                type: 'website',
+                url: BASE_URL_THIS_WEBSITE,
+            },
+        };
+    }
+
+    return {
+        title: `${product.name} | YL SPORT`,
+        description: product.description,
+        openGraph: {
+            title: `${product.name} | YL SPORT`,
+            description: product.description,
+            url: `${BASE_URL_THIS_WEBSITE}/product?id=${id}`,
+            images: product.imagesSrc.length > 0 ? product.imagesSrc[0] : '/default-image.jpg',
+        },
     };
+}
 
-    let colorsSource: Color[] = [];
-    let sizesSource: string[] = [];
+export default async function Page({ searchParams }: PageProps) {
+    const { id = '', name = '' } = searchParams || {};
 
-    const { data: colorsData, error: colorsError } = await supabase
-        .from('types_colors')
-        .select('*');
+    if (!id || !name) {
+        return productNotFound;
+    }
 
-        
-    if (colorsError) {
-        console.error('Error fetching colors', colorsError);
+    const [
+        { data: productData, error: productError },
+        { data: colorsData },
+        { data: sizesData },
+    ] = await Promise.all([
+        supabase.from('products').select('*').eq('id', id).eq('is_available', true).single(),
+        supabase.from('types_colors').select('*'),
+        supabase.from('types_sizes').select('value'),
+    ]);
+
+    if (productError || !productData) {
+        console.error('Error fetching product', productError);
+        return productNotFound;
     }
-    
-    if (colorsData) {
-        colorsSource = colorsData;
-    }
-    
-    const { data: sizesData, error: sizesError } = await supabase
-        .from('types_sizes')
-        .select('value');
-    
-    if (sizesError) {
-        console.error('Error fetching sizes', sizesError);
-    }
-    
-    if (sizesData) {
-        sizesSource = sizesData.map((size: any) => size.value);
-    }
+
+    const product: Product = mapProduct(productData);
+    const colorsSource: Color[] = colorsData || [];
+    const sizesSource: string[] = sizesData?.map((size) => size.value) || [];
 
     return (
-        // <ProducDetailsSkeleton />
         <Suspense fallback={<ProducDetailsSkeleton />}>
             <ProductDetails product={product} colorsSource={colorsSource} sizesSource={sizesSource} />
         </Suspense>
     );
-};
+}

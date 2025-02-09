@@ -43,9 +43,6 @@ export default function Login({
     }
 
     const signIn = async (formData: FormData) => {
-
-        console.log('formData', formData);
-
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
 

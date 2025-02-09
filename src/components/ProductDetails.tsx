@@ -11,7 +11,7 @@ import Image from 'next/image';
 import { replaceSpacesWithDashes } from '@/utils';
 import Link from 'next/link';
 import { capitalizeFirstLetterName } from "@/utils";
-
+import { BASE_URL_THIS_WEBSITE } from '@/constants';
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
@@ -48,8 +48,6 @@ const ProductDetails = ({
         ...product,
         colors: colorsAvailable,
         sizes: sizesAvailable,
-        // highlights: productX.highlights,
-        // details: productX.details
     }
     
     const [selectedColor, setSelectedColor] = useState(newProduct.colors[0])
@@ -57,9 +55,8 @@ const ProductDetails = ({
 
     const pathname = usePathname();
 
-    const currentUrl = `https://ylsport.me${pathname}?name=${replaceSpacesWithDashes(product.name)}&id=${product.id}`;
+    const currentUrl = `${BASE_URL_THIS_WEBSITE}${pathname}?name=${replaceSpacesWithDashes(product.name)}&id=${product.id}`;
     const phone = '573102614670';
-    // const phone = '573003107055';
 
     const whatsappMessage = `Hola, me interesa este producto: *${product.name.trim()}* \n\n_N° Ref:_  *${
 		product.id
@@ -284,28 +281,6 @@ const ProductDetails = ({
                                 <p className="text-base text-gray-900" style={{ whiteSpace: 'pre-wrap' }}>{newProduct.description}</p>
                             </div>
                         </div>
-
-                        {/* <div className="mt-10">
-                            <h3 className="text-sm font-medium text-gray-900">Highlights</h3>
-
-                            <div className="mt-4">
-                                <ul role="list" className="list-disc space-y-2 pl-4 text-sm">
-                                    {newProduct.highlights.map((highlight) => (
-                                        <li key={highlight} className="text-gray-400">
-                                            <span className="text-gray-600">{highlight}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div className="mt-10">
-                            <h2 className="text-sm font-medium text-gray-900">Details</h2>
-
-                            <div className="mt-4 space-y-6">
-                                <p className="text-sm text-gray-600">{newProduct.details}</p>
-                            </div>
-                        </div> */}
                     </div>
                 </div>
             </div>
