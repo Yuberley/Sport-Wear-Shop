@@ -45,7 +45,7 @@ export default function Contact() {
 
                     <a 
                         className="col-span-2 max-h-20 w-full object-contain lg:col-span-1"
-                        href="https://api.whatsapp.com/send?phone=573102614670&text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20productos"
+                        href="https://api.whatsapp.com/send?phone=573134571148&text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20productos"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
