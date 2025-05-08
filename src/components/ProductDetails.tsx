@@ -11,7 +11,7 @@ import Image from 'next/image';
 import { replaceSpacesWithDashes } from '@/utils';
 import Link from 'next/link';
 import { capitalizeFirstLetterName } from "@/utils";
-import { BASE_URL_THIS_WEBSITE } from '@/constants';
+import { BASE_URL_THIS_WEBSITE, PHONE_NUMBER } from '@/constants';
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
@@ -56,7 +56,6 @@ const ProductDetails = ({
     const pathname = usePathname();
 
     const currentUrl = `${BASE_URL_THIS_WEBSITE}${pathname}?name=${replaceSpacesWithDashes(product.name)}&id=${product.id}`;
-    const phone = '573102614670';
 
     const whatsappMessage = `Hola, me interesa este producto: *${product.name.trim()}* \n\n_N° Ref:_  *${
 		product.id
@@ -76,7 +75,7 @@ const ProductDetails = ({
 			: parseInt(product.price).toLocaleString()
 	} *COP* \n\n${currentUrl}`;
 
-    const whatsappHref = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(whatsappMessage)}`;
+    const whatsappHref = `https://api.whatsapp.com/send?phone=${PHONE_NUMBER}&text=${encodeURIComponent(whatsappMessage)}`;
 
     return (
         <div className="bg-white">

@@ -53,6 +53,7 @@ const SideNav = ({ onToggle }: { onToggle: (isOpen: boolean) => void }) => {
 					alt="Logo"
 					width={40}
 					height={40}
+					unoptimized
 					className="rounded-md shadow-md"
 				/>
 				{isOpen && <span className="text-xl font-semibold">Dashboard</span>}
