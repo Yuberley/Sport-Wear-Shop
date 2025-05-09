@@ -106,7 +106,7 @@ const SideNav = ({ onToggle }: { onToggle: (isOpen: boolean) => void }) => {
 					</Link>
 
 					<Link
-						href="#"
+						href="/dashboard/reports"
 						className={`flex items-center gap-4 p-2 rounded-lg transition-colors ${
 							isActive('/dashboard/reports')
 								? 'bg-gray-700 text-white font-bold'
