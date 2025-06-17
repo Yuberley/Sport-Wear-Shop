@@ -44,6 +44,7 @@ const CardProduct = ({ product }: CardProductProps) => {
                     alt={product.name}
                     width={550}
                     height={550}
+                    unoptimized
                     className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                 />
                 </div>
