@@ -71,9 +71,9 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
 }
 
 export default async function Page({ searchParams }: PageProps) {
-    const { id = '', name = '' } = searchParams || {};
+    const { id = ''} = searchParams || {};
 
-    if (!id || !name) {
+    if (!id) {
         return productNotFound;
     }
 

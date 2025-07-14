@@ -14,20 +14,16 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
-  useDisclosure, 
-//   Dropdown,
-//   DropdownTrigger,
-//   DropdownMenu,
-//   DropdownItem,
-  Input,
-  Spinner} from "@nextui-org/react";
+  useDisclosure,
+  Input
+} from "@nextui-org/react";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { NAME_BUCKET_IMAGES } from '@/constants';
 import { DeleteIcon } from '../icons/DeleteIcons';
 import { EditIcon } from '../icons/EditIcon';
 import { SearchIcon } from '../icons/SearchIcon';
 import { LoadingContent } from '../LoadingContent';
-// import { ChevronDownIcon } from '../icons/ChevronDownIcon';
+import { EyeIcon } from '../icons/EyeIcon';
 
 const ProductTable = (
     { 
@@ -59,9 +55,7 @@ const ProductTable = (
     {
 
     const [productToDelete, setProductToDelete] = useState<Product | null>(null);
-    const {isOpen, onOpen, onClose} = useDisclosure();
-    // const [availabilityFilter, setAvailabilityFilter] = useState<Set<string>>(new Set(['all']));
-    
+    const {isOpen, onOpen, onClose} = useDisclosure();    
 
     const startIndex = (page - 1) * rowsPerPage + 1;
     const endIndex = Math.min(page * rowsPerPage, totalProducts);
@@ -132,27 +126,6 @@ const ProductTable = (
                         onClear={() => handleSearchTermId('')}
                     />
                     <div className="flex gap-3">
-                        {/* <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                                    Available
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Filter by Availability"
-                                closeOnSelect={false}
-                                selectedKeys={availabilityFilter}
-                                selectionMode="single"
-                                onSelectionChange={(keys) => {
-                                    setAvailabilityFilter(new Set(keys as Set<string>));
-                                }}
-                            >
-                                <DropdownItem key="all">All</DropdownItem>
-                                <DropdownItem key="yes">Yes</DropdownItem>
-                                <DropdownItem key="no">No</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown> */}
                         <div>    
                             <Button
                                 color="primary"
@@ -249,8 +222,17 @@ const ProductTable = (
                                     <TableCell>
                                         <div className="relative flex items-center gap-2">
                                             <Link
+                                                href={`/product?id=${product.id}`}
+                                                className="text-lg text-secondary cursor-pointer active:opacity-50 relative group mr-2"
+                                                title="View product"
+                                                target='_blank'
+                                            >
+                                                <EyeIcon />
+                                            </Link>
+                                            <Link
                                                 // href={`/dashboard/products/create?productEditId=${product.id}`}
                                                 href={`#`}
+                                                title="Edit product"
                                                 className="text-lg text-primary cursor-pointer active:opacity-50 relative group mr-2">
                                                 <EditIcon />
                                             </Link>
@@ -260,6 +242,7 @@ const ProductTable = (
                                                 className="text-lg text-danger cursor-pointer active:opacity-50 relative group"
                                                 role="button"
                                                 aria-label="Delete product"
+                                                title="Delete product"
                                             >
                                                 <DeleteIcon />
                                             </span>
