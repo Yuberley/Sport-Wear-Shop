@@ -19,11 +19,14 @@ import {
 } from "@nextui-org/react";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { NAME_BUCKET_IMAGES } from '@/constants';
-import { DeleteIcon } from '../icons/DeleteIcons';
-import { EditIcon } from '../icons/EditIcon';
-import { SearchIcon } from '../icons/SearchIcon';
-import { LoadingContent } from '../LoadingContent';
-import { EyeIcon } from '../icons/EyeIcon';
+import { DeleteIcon } from '@/components/icons/DeleteIcons';
+import { EditIcon } from '@/components/icons/EditIcon';
+import { SearchIcon } from '@/components/icons/SearchIcon';
+import { ViewIcon } from  '@/components/icons/ViewIcon';
+import { LoadingContent } from '@/components/LoadingContent';
+import { EyeIcon } from '@/components/icons/EyeIcon';
+import { ProductSidenav } from '@/components/dashboard/products/ProductSidenav';
+import { ArrowTopRightIcon } from '../icons/ArrowTopRightIcon';
 
 const ProductTable = (
     { 
@@ -55,7 +58,9 @@ const ProductTable = (
     {
 
     const [productToDelete, setProductToDelete] = useState<Product | null>(null);
-    const {isOpen, onOpen, onClose} = useDisclosure();    
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+    const {isOpen, onOpen, onClose} = useDisclosure();
+    const { isOpen: isSidenavOpen, onOpen: onSidenavOpen, onClose: onSidenavClose } = useDisclosure()
 
     const startIndex = (page - 1) * rowsPerPage + 1;
     const endIndex = Math.min(page * rowsPerPage, totalProducts);
@@ -93,6 +98,11 @@ const ProductTable = (
         setProductToDelete(product);
         onOpen();
     };
+
+    const handleViewProduct = (product: Product) => {
+        setSelectedProduct(product)
+        onSidenavOpen()
+    }
 
     const confirmDelete = async () => {
         if (productToDelete) {
@@ -161,8 +171,15 @@ const ProductTable = (
                 </div>
             </div>
         );
-    }, [searchTerm, searchTermId, totalProducts, rowsPerPage, handleSearchTerm, handleSearchTermId, handleRowsPerPageChange]);
-    
+    }, [
+        searchTerm,
+        searchTermId,
+        totalProducts,
+        rowsPerPage,
+        handleSearchTerm,
+        handleSearchTermId,
+        handleRowsPerPageChange,
+    ]);
 
     return (
         <>
@@ -208,51 +225,63 @@ const ProductTable = (
                     loadingContent={<LoadingContent message="Loading products..." />}
                     >
                     {products?.map((product: Product, index: number) => (
-                            product && (
-                                <TableRow key={index}>
-                                    <TableCell>{product.id}</TableCell>
-                                    <TableCell>{product?.name}</TableCell>
-                                    <TableCell>{formatPrice(product?.price)}</TableCell>
-                                    <TableCell>{formatDiscount(product?.discount)}</TableCell>
-                                    <TableCell>{formatPrice(product?.newPrice)}</TableCell>
-                                    <TableCell>{capitalizeFirstLetter(product?.category)}</TableCell>
-                                    <TableCell>{product?.isAvailable ? <Chip color="success" size="sm" variant="flat">Yes</Chip> : <Chip color="danger" size="sm" variant="flat">No</Chip>}</TableCell>
-                                    <TableCell>{product?.isComingSoon ? <Chip color="success" size="sm" variant="flat">Yes</Chip> : <Chip color="warning" size="sm" variant="flat">No</Chip>}</TableCell>
-                                    <TableCell>{formatDate(product?.createdAt)}</TableCell>
-                                    <TableCell>
-                                        <div className="relative flex items-center gap-2">
-                                            <Link
-                                                href={`/product?id=${product.id}`}
-                                                className="text-lg text-secondary cursor-pointer active:opacity-50 relative group mr-2"
-                                                title="View product"
-                                                target='_blank'
-                                            >
-                                                <EyeIcon />
-                                            </Link>
-                                            <Link
-                                                // href={`/dashboard/products/create?productEditId=${product.id}`}
-                                                href={`#`}
-                                                title="Edit product"
-                                                className="text-lg text-primary cursor-pointer active:opacity-50 relative group mr-2">
-                                                <EditIcon />
-                                            </Link>
-                                            
-                                            <span
-                                                onClick={() => handleDelete(product)}
-                                                className="text-lg text-danger cursor-pointer active:opacity-50 relative group"
-                                                role="button"
-                                                aria-label="Delete product"
-                                                title="Delete product"
-                                            >
-                                                <DeleteIcon />
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        ))}
+                        product && (
+                            <TableRow key={index}>
+                                <TableCell>{product.id}</TableCell>
+                                <TableCell>{product?.name}</TableCell>
+                                <TableCell>{formatPrice(product?.price)}</TableCell>
+                                <TableCell>{formatDiscount(product?.discount)}</TableCell>
+                                <TableCell>{formatPrice(product?.newPrice)}</TableCell>
+                                <TableCell>{capitalizeFirstLetter(product?.category)}</TableCell>
+                                <TableCell>{product?.isAvailable ? <Chip color="success" size="sm" variant="flat">Yes</Chip> : <Chip color="danger" size="sm" variant="flat">No</Chip>}</TableCell>
+                                <TableCell>{product?.isComingSoon ? <Chip color="success" size="sm" variant="flat">Yes</Chip> : <Chip color="warning" size="sm" variant="flat">No</Chip>}</TableCell>
+                                <TableCell>{formatDate(product?.createdAt)}</TableCell>
+                                <TableCell>
+                                    <div className="relative flex items-center gap-2">
+                                        <Link
+                                            href={`/product?id=${product.id}`}
+                                            className="text-lg text-secondary cursor-pointer active:opacity-50 relative group mr-2"
+                                            title="View product"
+                                            target='_blank'
+                                        >
+                                            <ArrowTopRightIcon />
+                                        </Link>
+                                        <button
+                                            onClick={() => handleViewProduct(product)}
+                                            className="text-lg text-secondary cursor-pointer active:opacity-50 relative group mr-2"
+                                            title="View product details"
+                                        >
+                                            <EyeIcon />
+                                        </button>
+                                        <Link
+                                            // href={`/dashboard/products/create?productEditId=${product.id}`}
+                                            href={`#`}
+                                            title="Edit product"
+                                            className="text-lg text-primary cursor-pointer active:opacity-50 relative group mr-2">
+                                            <EditIcon />
+                                        </Link>
+                                        
+                                        <span
+                                            onClick={() => handleDelete(product)}
+                                            className="text-lg text-danger cursor-pointer active:opacity-50 relative group"
+                                            role="button"
+                                            aria-label="Delete product"
+                                            title="Delete product"
+                                        >
+                                            <DeleteIcon />
+                                        </span>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        )
+                    ))}
                 </TableBody>
             </Table>
+
+            {/* Product Details Sidenav */}
+            <ProductSidenav isOpen={isSidenavOpen} onClose={onSidenavClose} product={selectedProduct} />
+
+            {/* Delete Confirmation Modal */}
             <Modal backdrop={"blur"} isOpen={isOpen} onClose={onClose}>
                 <ModalContent>
                 {(onClose) => (

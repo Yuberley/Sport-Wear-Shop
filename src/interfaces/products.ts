@@ -11,12 +11,14 @@ export interface Product {
     imagesSrc: string[];
     isAvailable: boolean;
     isComingSoon: boolean;
-    gerder?: string;
-    unitPrice?: number;
-    unitCost?: number;
-    currentStock?: number;
-    entryDate?: string;
-    salePrice?: number;
+    isFeatured: boolean;
+    gerder: string;
+    unitPrice: string;
+    unitCost: string;
+    unitPriceWithDiscount: string;
+    currentStock: string;
+    entryDate: string;
+    salePrice: string;
     createdAt: string;
 };
 
