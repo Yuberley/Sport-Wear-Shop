@@ -36,6 +36,14 @@ export default function CreateProduct() {
         isAvailable: true,
         isComingSoon: false,
         createdAt: '',
+        currentStock: '',
+        entryDate: '',
+        gender: '',
+        isFeatured: false,
+        salePrice: '',
+        unitCost: '',
+        unitPrice: '',
+        unitPriceWithDiscount: '',
     });
 
     const [loadingSaveProduct, setLoadingSaveProduct] = useState<boolean>(false);
@@ -178,6 +186,14 @@ export default function CreateProduct() {
                 isAvailable: true,
                 isComingSoon: false,
                 createdAt: '',
+                currentStock: '',
+                entryDate: '',
+                gender: '',
+                isFeatured: false,
+                salePrice: '',
+                unitCost: '',
+                unitPrice: '',
+                unitPriceWithDiscount: '',
             });
 
             setLocalImages([]);

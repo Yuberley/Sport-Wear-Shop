@@ -88,10 +88,10 @@ export const ProductSidenav: React.FC<ProductSidenavProps> = ({ isOpen, onClose,
                                         <p className="text-sm mt-1">{capitalizeFirstLetter(product.category)}</p>
                                     </div>
 
-                                    {product.gerder && (
+                                    {product.gender && (
                                       <div>
                                           <label className="text-sm font-medium text-gray-600">Gender:</label>
-                                          <p className="text-sm mt-1">{capitalizeFirstLetter(product.gerder)}</p>
+                                          <p className="text-sm mt-1">{capitalizeFirstLetter(product.gender)}</p>
                                       </div>
                                     )}
                                 </div>

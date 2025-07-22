@@ -96,8 +96,6 @@ export default async function Page({ searchParams }: PageProps) {
     const colorsSource: Color[] = colorsData || [];
     const sizesSource: string[] = sizesData?.map((size) => size.value) || [];
 
-    console.log('Product details:', product);
-
     return (
         <Suspense fallback={<ProducDetailsSkeleton />}>
             <ProductDetails product={product} colorsSource={colorsSource} sizesSource={sizesSource} />
