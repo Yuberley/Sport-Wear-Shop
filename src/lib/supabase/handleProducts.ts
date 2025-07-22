@@ -45,7 +45,7 @@ export const SearhProductById = async (productId: string): Promise<Product | nul
         .select('*')
         .eq('id', productId)
         .single();
-
+ 
     if (error) {
         toast.warning(error?.details);
         return null;

@@ -2,6 +2,7 @@
 export interface Category {
     id: string;
     name: string;
+    genders: string[];
 };
 
 export interface Color {
