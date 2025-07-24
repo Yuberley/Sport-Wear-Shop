@@ -7,7 +7,8 @@ export const isProductValid = (product: Product): boolean => {
         !product.price ||
         !product.category ||
         !product.colors.length ||
-        !product.sizes.length
+        !product.sizes.length ||
+        !product.itemType
     ) {
         return false;
     }
