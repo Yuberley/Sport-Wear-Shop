@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import ListProducts from "@/components/ListProducts";
+import ListProducts from "@/components/client/products/ListProducts";
 import { ListProductsSkeleton } from "../skeletons";
 import { cookies } from "next/headers";
 import type { Metadata } from "next";
-import { Product } from "@/interfaces/products";
+import { Product } from "@/interfaces/Products";
 import { mapProductList } from "@/utils/mappers";
 import { supabase } from "@/lib/supabase/initSupabase";
 import 'animate.css';

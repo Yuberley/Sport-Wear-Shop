@@ -6,7 +6,7 @@ import { Tabs, Tab } from "@nextui-org/tabs"
 import { SalesTable } from "@/components/dashboard/reports/SalesTable"  
 import { SalesSummary } from "@/components/dashboard/reports/SalesSummary"  
 import { getSalesReport } from "@/lib/supabase/salesApi"  
-import { SalesReport } from "@/interfaces/sales"  
+import { SalesReport } from "@/interfaces/Sales"  
   
 export default function ReportsPage() {  
   const [dateRange, setDateRange] = useState({ from: null, to: null })  

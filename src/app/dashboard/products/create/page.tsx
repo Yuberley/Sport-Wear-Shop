@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
@@ -11,40 +11,25 @@ import { Image } from "@nextui-org/react";
 import { supabase } from '@/lib/supabase/initSupabase';
 import { SUPABASE_URL } from '@/environment';
 import { Category, Color, Size } from '@/interfaces';
-import { Product } from '@/interfaces/products';
+import { Product } from '@/interfaces/Products';
 import { convertPhraseToSnakeCase } from '@/utils';
 import { Toaster, toast } from 'sonner';
 import { MAX_SIZE_IMAGE_IN_MB, NAME_BUCKET_IMAGES } from '@/constants';
 import { mapProduct } from '@/utils/mappers';
+import { initialProduct } from '@/data/Products';
+import { 
+    GetColors, 
+    GetSizes, 
+    GetCategories,
+    SearhProductById,
+} from '@/lib/supabase/handlers';
 
 export default function CreateProduct() {
 
     const searchParams = useSearchParams()
     const productEditId = searchParams.get('productEditId');
 
-    const [product, setProduct] = useState<Product>({
-        id: '',
-        name: '',
-        description: '',
-        price: '',
-        discount: '',
-        newPrice: '',
-        colors: [],
-        sizes: [],
-        category: '',
-        imagesSrc: [],
-        isAvailable: true,
-        isComingSoon: false,
-        createdAt: '',
-        currentStock: '',
-        entryDate: '',
-        gender: '',
-        isFeatured: false,
-        salePrice: '',
-        unitCost: '',
-        unitPrice: '',
-        unitPriceWithDiscount: '',
-    });
+    const [product, setProduct] = useState<Product>(initialProduct);
 
     const [loadingSaveProduct, setLoadingSaveProduct] = useState<boolean>(false);
     const [urlImages, setUrlImages] = useState<string[]>([]);
@@ -53,86 +38,40 @@ export default function CreateProduct() {
     const [colors, setColors] = useState<Color[]>([]);
     const [sizes, setSizes] = useState<Size[]>([]);
 
-    const getCategories = async () => {
-        let { data: types_categories, error } = await supabase
-        .from('types_categories')
-        .select('*')
+    const getCategories = useCallback(async () => {
+        const categories = await GetCategories();
+        setCategories(categories);
+    }, []);
 
-        if (error) {
-            toast.error('Error getting categories',{
-                description: error.message,
-            });
-            return;
-        }
+    const getColors = useCallback(async () => {
+        const colors = await GetColors();
+        setColors(colors);
+    }, []);
 
-        setCategories(types_categories as Category[]);
-    }
-
-    const getColors = async () => {
-        let { data: types_colors, error } = await supabase
-        .from('types_colors')
-        .select('*')
-
-        if (error) {
-            toast.error('Error getting colors',{
-                description: error.message,
-            });
-            return;
-        }
-
-        setColors(types_colors as Color[]);
-    }
-
-    const getSizes = async () => {
-        let { data: types_sizes, error } = await supabase
-        .from('types_sizes')
-        .select('*')
-
-        if (error) {
-            toast.error('Error getting sizes',{
-                description: error.message,
-            });
-            return;
-        }
-
-        setSizes(types_sizes as Size[]);
-    }
+    const getSizes = useCallback(async () => {
+        const sizes = await GetSizes();
+        setSizes(sizes);
+    }, []);
 
     useEffect( () => {
         getCategories();
         getColors();
         getSizes();
-    }, []);
-        
+    }, [getCategories, getColors, getSizes]);
+
+    const getProduct = async (id: string) => {
+        const product = await SearhProductById(id);
+
+        if (product) {
+            setProduct(product);
+        }
+    }
+
     useEffect(() => {
         if (productEditId) {
             getProduct(productEditId);
         }
     }, [productEditId]);
-
-
-    const getProduct = async (id: string) => {
-
-        let product: Product;
-
-        const { data, error } = await supabase
-            .from('products')
-            .select('*')
-            .eq('id', id)
-            .single()
-
-        if (error) {
-            toast.error('Error getting product',{
-                description: error.message,
-            });
-            return;
-        }
-
-        if (data) {
-            product = mapProduct(data);
-            setProduct(product);
-        }
-    }
 
     const saveProduct =  () => {
         
@@ -172,29 +111,7 @@ export default function CreateProduct() {
 
             toast.success('Product saved successfully');
 
-            setProduct({
-                id: '',
-                name: '',
-                description: '',
-                price: '',
-                discount: '',
-                newPrice: '',
-                colors: [],
-                sizes: [],
-                category: '',
-                imagesSrc: [],
-                isAvailable: true,
-                isComingSoon: false,
-                createdAt: '',
-                currentStock: '',
-                entryDate: '',
-                gender: '',
-                isFeatured: false,
-                salePrice: '',
-                unitCost: '',
-                unitPrice: '',
-                unitPriceWithDiscount: '',
-            });
+            setProduct(initialProduct);
 
             setLocalImages([]);
             setLoadingSaveProduct(false);
@@ -593,45 +510,6 @@ export default function CreateProduct() {
                                     ))
 
                                 }
-
-
-
-                                {/* {
-                                    product.imagesSrc.map((imageSrc, index) => (
-                                        <div key={index} className="relative w-38 border-1 border-white/20 rounded-large shadow-small">
-                                            <Card
-                                                isFooterBlurred
-                                                radius="lg"
-                                                className="border-none"
-                                            >
-                                                <Image
-                                                    alt="Woman listing to music"
-                                                    className="object-cover"
-                                                    height={200}
-                                                    src={imageSrc}
-                                                    width={200}
-                                                />
-                                                <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-                                                    <p className="text-tiny text-white/80">
-                                                        Image {index + 1}
-                                                    </p>
-                                                    <Button 
-                                                        className="text-tiny text-white bg-black/20" 
-                                                        variant="flat" 
-                                                        color="default" 
-                                                        radius="lg" 
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            deleteImageStorage(imageSrc);
-                                                        }}
-                                                    >
-                                                        Remove
-                                                    </Button>
-                                                </CardFooter>
-                                            </Card>
-                                        </div>
-                                    ))
-                                } */}
                             </div>
                         </div>
                     </div>

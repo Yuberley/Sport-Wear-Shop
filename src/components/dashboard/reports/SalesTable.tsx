@@ -1,6 +1,6 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/table"  
 import { Chip } from "@nextui-org/chip"  
-import { Sale } from "@/interfaces/sales"  
+import { Sale } from "@/interfaces/Sales"  
   
 interface SalesTableProps {  
   sales: Sale[];  

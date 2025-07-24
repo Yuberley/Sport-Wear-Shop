@@ -1,6 +1,6 @@
 'use client';
 
-import Header from '@/components/Header'
+import Header from '@/components/client/shared/Header'
 import { NextUIProvider } from '@nextui-org/react';
 import { usePathname } from 'next/navigation';
 

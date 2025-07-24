@@ -10,8 +10,8 @@ import {
 import { Color } from '@/interfaces';
 import { toast, Toaster } from 'sonner';
 import { capitalizeFirstLetter } from '@/utils';
-import { EditIcon } from '../icons/EditIcon';
-import { DeleteIcon } from '../icons/DeleteIcons';
+import { EditIcon } from './icons/EditIcon';
+import { DeleteIcon } from './icons/DeleteIcons';
 
 const ColorsTable = (
         { 

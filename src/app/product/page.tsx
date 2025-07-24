@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
-import ProductDetails from '@/components/ProductDetails';
+import ProductDetails from '@/components/client/products/ProductDetails';
 import ProducDetailsSkeleton from '@/skeletons';
-import { Product } from '@/interfaces/products';
+import { Product } from '@/interfaces/Products';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { mapProduct } from '@/utils/mappers';
 import { Color } from '@/interfaces';

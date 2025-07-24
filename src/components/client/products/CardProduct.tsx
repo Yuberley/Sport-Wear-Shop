@@ -1,5 +1,5 @@
 import React from 'react';
-import { Product } from '../interfaces/products';
+import { Product } from '../../../interfaces/Products';
 import Link from 'next/link';
 import Image from 'next/image';
 import { replaceSpacesWithDashes } from '@/utils';

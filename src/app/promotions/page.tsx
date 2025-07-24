@@ -1,5 +1,5 @@
-import ListProducts from '@/components/ListProducts';
-import { Product } from '@/interfaces/products';
+import ListProducts from '@/components/client/products/ListProducts';
+import { Product } from '@/interfaces/Products';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { ListProductsSkeleton } from '@/skeletons';
 import { mapProductList } from '@/utils/mappers';

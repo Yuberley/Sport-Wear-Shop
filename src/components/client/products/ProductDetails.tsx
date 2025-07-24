@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { RadioGroup } from '@headlessui/react';
-import { Product } from '@/interfaces/products';
+import { Product } from '@/interfaces/Products';
 import { Color } from '@/interfaces';
 import {
     usePathname,

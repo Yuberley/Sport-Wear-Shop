@@ -1,5 +1,5 @@
 import { Card, CardBody } from "@nextui-org/card"  
-import { SalesReport } from "@/interfaces/sales"  
+import { SalesReport } from "@/interfaces/Sales"  
 import { Overview } from "@/components/dashboard/home/Overview"  
   
 interface SalesSummaryProps {  

@@ -1,0 +1,25 @@
+import { Product } from "@/interfaces/Products";
+
+export const initialProduct: Product = {
+    id: '',
+    name: '',
+    description: '',
+    price: '',
+    discount: '',
+    newPrice: '',
+    colors: [],
+    sizes: [],
+    category: '',
+    imagesSrc: [],
+    isAvailable: true,
+    isComingSoon: false,
+    createdAt: '',
+    currentStock: '',
+    entryDate: '',
+    itemType: '',
+    isFeatured: false,
+    salePrice: '',
+    unitCost: '',
+    unitPrice: '',
+    unitPriceWithDiscount: '',
+}

@@ -1,5 +1,5 @@
-import CardProduct from "@/components/CardProduct";
-import { Product } from "@/interfaces/products";
+import CardProduct from "@/components/client/products/CardProduct";
+import { Product } from "@/interfaces/Products";
 
 
 // export default async function ListProducts({category, commigsoon}: {category?: string, commigsoon?: boolean}) {

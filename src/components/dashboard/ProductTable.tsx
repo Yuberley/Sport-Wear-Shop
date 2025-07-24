@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Product } from '@/interfaces/products';
+import { Product } from '@/interfaces/Products';
 import { capitalizeFirstLetter } from '@/utils';
 import { toast, Toaster } from 'sonner';
 import { supabase } from '@/lib/supabase/initSupabase';
@@ -19,14 +19,14 @@ import {
 } from "@nextui-org/react";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { NAME_BUCKET_IMAGES } from '@/constants';
-import { DeleteIcon } from '@/components/icons/DeleteIcons';
-import { EditIcon } from '@/components/icons/EditIcon';
-import { SearchIcon } from '@/components/icons/SearchIcon';
-import { ViewIcon } from  '@/components/icons/ViewIcon';
-import { LoadingContent } from '@/components/LoadingContent';
-import { EyeIcon } from '@/components/icons/EyeIcon';
+import { DeleteIcon } from '@/components/dashboard/icons/DeleteIcons';
+import { EditIcon } from '@/components/dashboard/icons/EditIcon';
+import { SearchIcon } from '@/components/dashboard/icons/SearchIcon';
+import { ViewIcon } from  '@/components/dashboard/icons/ViewIcon';
+import { LoadingContent } from '@/components/client/shared/LoadingContent';
+import { EyeIcon } from '@/components/dashboard/icons/EyeIcon';
 import { ProductSidenav } from '@/components/dashboard/products/ProductSidenav';
-import { ArrowTopRightIcon } from '../icons/ArrowTopRightIcon';
+import { ArrowTopRightIcon } from './icons/ArrowTopRightIcon';
 
 const ProductTable = (
     { 

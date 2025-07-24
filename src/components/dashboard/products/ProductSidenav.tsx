@@ -1,6 +1,6 @@
 import type React from "react"
 import { Modal, ModalContent, ModalHeader, ModalBody, Chip, Image, Divider, ScrollShadow } from "@nextui-org/react"
-import type { Product } from "@/interfaces/products"
+import type { Product } from "@/interfaces/Products"
 import { capitalizeFirstLetter } from "@/utils"
 import { formatDate, formatDiscount, formatPrice } from "@/utils/formatters"
 import { XMarkIcon } from "@heroicons/react/24/outline"
@@ -88,10 +88,10 @@ export const ProductSidenav: React.FC<ProductSidenavProps> = ({ isOpen, onClose,
                                         <p className="text-sm mt-1">{capitalizeFirstLetter(product.category)}</p>
                                     </div>
 
-                                    {product.gender && (
+                                    {product.itemType && (
                                       <div>
-                                          <label className="text-sm font-medium text-gray-600">Gender:</label>
-                                          <p className="text-sm mt-1">{capitalizeFirstLetter(product.gender)}</p>
+                                          <label className="text-sm font-medium text-gray-600">Item Type:</label>
+                                          <p className="text-sm mt-1">{capitalizeFirstLetter(product.itemType)}</p>
                                       </div>
                                     )}
                                 </div>

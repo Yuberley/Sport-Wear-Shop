@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase/initSupabase"  
-import { Sale, SalesReport } from "@/interfaces/sales"  
+import { Sale, SalesReport } from "@/interfaces/Sales"  
   
 export async function getSales(dateFrom?: Date, dateTo?: Date) {  
   let query = supabase.from('sales').select('*')  

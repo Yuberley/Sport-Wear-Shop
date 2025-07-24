@@ -12,7 +12,7 @@ export interface Product {
     isAvailable: boolean;
     isComingSoon: boolean;
     isFeatured: boolean;
-    gender: string;
+    itemType: string;
     unitPrice: string;
     unitCost: string;
     unitPriceWithDiscount: string;

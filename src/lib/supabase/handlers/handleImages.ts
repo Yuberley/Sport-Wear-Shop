@@ -1,4 +1,4 @@
-import { supabase } from "./initSupabase";
+import { supabase } from "../initSupabase";
 
 const deleteImageStorage = async (url: string) => {
     const urlImage = url.split('/').pop() as string;

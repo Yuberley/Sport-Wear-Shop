@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Product } from '@/interfaces/products';
+import { Product } from '@/interfaces/Products';
 import { Toaster } from 'sonner';
-import { Spinner, Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import useDebounce from '@/hooks/useDebunce';
 import ProductTable from '@/components/dashboard/ProductTable';
-import { PlusIcon } from '@/components/icons/PlusIcon';
-import { SerchProductsByName, GetProductsWithPagination, SearhProductById } from '@/lib/supabase/handleProducts';
+import { PlusIcon } from '@/components/dashboard/icons/PlusIcon';
+import { SerchProductsByName, GetProductsWithPagination, SearhProductById } from '@/lib/supabase/handlers/handleProducts';
 
 export default function Products() {
     const router = useRouter();

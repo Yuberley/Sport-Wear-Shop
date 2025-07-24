@@ -17,8 +17,8 @@ import {
 import { supabase } from '@/lib/supabase/initSupabase';
 import { Category } from '@/interfaces';
 import { capitalizeFirstLetter } from '@/utils';
-import { EditIcon } from '../icons/EditIcon';
-import { DeleteIcon } from '../icons/DeleteIcons';
+import { EditIcon } from './icons/EditIcon';
+import { DeleteIcon } from './icons/DeleteIcons';
 import { toast, Toaster } from 'sonner';
 
 const CategoriesTable = (

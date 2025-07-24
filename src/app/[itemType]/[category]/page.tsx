@@ -1,10 +1,10 @@
-import ListProducts from "@/components/ListProducts";
+import ListProducts from "@/components/client/products/ListProducts";
 import { Suspense } from "react";
 import { ListProductsSkeleton } from "@/skeletons";
 import { notFound } from "next/navigation";
 import { capitalizeFirstLetter } from "@/utils";
 import { cookies } from "next/headers";
-import { Product } from "@/interfaces/products";
+import { Product } from "@/interfaces/Products";
 import { supabase } from "@/lib/supabase/initSupabase";
 import { mapProductList } from "@/utils/mappers";
 import { Metadata } from "next";
@@ -20,21 +20,31 @@ export const metadata: Metadata = {
     authors: [{url: "https://www.instagram.com/yudig_209/", name:"Yudilexy Guerrero"}],
 };
 
-export default async function Gender(props: any) {
+export default async function CategoryByItemType(props: any) {
 
     const cookieStore = cookies();
 
-    let { gender } = props.params;
-    let genderTitle = '';
-    let genderSlug = '';
+    let { itemType, category } = props.params;
+    let categoryTitle = '';
+    let categorySlug = '';
+    let itemTypeTitle = '';
+    let itemTypeSlug = '';
 
-    if (!gender) {
-        return notFound();
+    console.log("Item Type:", itemType);
+    console.log("Category:", category);
+
+    if (!category || !itemType) {
+        return notFound;
     }
 
-    if (gender) {
-        genderTitle = capitalizeFirstLetter(gender);
-        genderSlug = gender.toLowerCase();
+    if (category) {
+        categoryTitle = capitalizeFirstLetter(category.charAt(0).toUpperCase() + category.slice(1));
+        categorySlug = category.split('-').join(' ');
+    }
+
+    if (itemType) {
+        itemTypeTitle = capitalizeFirstLetter(itemType.charAt(0).toUpperCase() + itemType.slice(1));
+        itemTypeSlug = itemType.split('-').join(' ');
     }
 
     const products: Product[] = [];
@@ -42,19 +52,19 @@ export default async function Gender(props: any) {
     const { data } = await supabase
         .from('products')
         .select('*')
-        .eq('gender', genderSlug)
+        .eq('category', categorySlug)
+        .eq('item_type', itemTypeSlug)
         .eq('is_available', true)
         .eq('is_coming_soon', false);
 
     if (data) products.push(...mapProductList(data));
 
+
     return (
         <div className="bg-white">
             <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-                <h2 className="text-2xl font-bold tracking-tight text-gray-500">
-                Género - <span className="text-gray-900">
-                        {genderTitle}
-                    </span>
+                <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+                    {categoryTitle} <span className="text-gray-500"> - </span> {itemTypeTitle}
                 </h2>
                 <Suspense
                     fallback={<ListProductsSkeleton />}
