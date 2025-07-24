@@ -49,7 +49,7 @@ const SideNav = ({ onToggle }: { onToggle: (isOpen: boolean) => void }) => {
 				} transition-all`}
 			>
 				<Image
-					src="/logo_ylsport.jpg"
+					src="/logo_ylsport_white.png"
 					alt="Logo"
 					width={40}
 					height={40}

@@ -8,7 +8,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid"
 import Link from "next/link"
 import Image from "next/image"
 import { replaceSpacesWithDashes } from "@/utils"
-import LogoYLSPORT from "@public/logo_ylsport.jpg"
+import LogoYLSPORT from "@public/logo_ylsport.png"
 import type { Category } from "@/interfaces"
 import { useRouter } from "next/navigation"
 import { GetCategories } from "@/lib/supabase/handlers/handleCategories"
@@ -46,7 +46,7 @@ export default function Header() {
                         <Image
                             width={300}
                             height={300}
-                            className="h-24 lg:h-40 w-auto"
+                            className="h-24 lg:h-40 w-auto pt-2"
                             src={LogoYLSPORT || "/placeholder.svg"}
                             alt="logo"
                         />
@@ -167,97 +167,114 @@ export default function Header() {
                 </div>
             </nav>
             {/* Mobile Menu */}
-            <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
-                <div className="fixed inset-0 z-10" />
-                <Dialog.Panel className="fixed inset-y-0 right-0 z-20 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-                    <div className="flex items-center justify-between">
-                        <a href="#" className="-m-1.5 p-1.5">
-                        <span className="sr-only">YL Sport Wear</span>
-                        <Image
-                        width={300}
-                        height={300}
-                        className="h-8 w-auto"
-                        src={LogoYLSPORT || "/placeholder.svg"}
-                        alt="logo"
-                        />
-                        </a>
-                        <button
-                            type="button"
-                            className="-m-2.5 rounded-md p-2.5 text-gray-700"
-                            onClick={() => setMobileMenuOpen(false)}
-                        >
-                            <span className="sr-only">Close menu</span>
-                            <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                        </button>
-                    </div>
-                    <div className="mt-6 flow-root">
-                        <div className="-my-6 divide-y divide-gray-500/10">
-                            <div className="space-y-2 py-6">
-                                <Link
-                                    href="/"
-                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+            <Transition show={mobileMenuOpen} as={Fragment}>
+                <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="transition-opacity ease-out duration-200"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity ease-in duration-150"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0 z-10 bg-black/20" />
+                    </Transition.Child>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="transition ease-out duration-300 transform"
+                        enterFrom="translate-x-full"
+                        enterTo="translate-x-0"
+                        leave="transition ease-in duration-200 transform"
+                        leaveFrom="translate-x-0"
+                        leaveTo="translate-x-full"
+                    >
+                        <Dialog.Panel className="fixed inset-y-0 right-0 z-20 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+                            <div className="flex items-center justify-between">
+                                <a href="#" className="-m-1.5 p-1.5">
+                                    <span className="sr-only">YL Sport Wear</span>
+                                    <Image
+                                        width={300}
+                                        height={300}
+                                        className="h-8 w-auto"
+                                        src={LogoYLSPORT || "/placeholder.svg"}
+                                        alt="logo"
+                                    />
+                                </a>
+                                <button
+                                    type="button"
+                                    className="-m-2.5 rounded-md p-2.5 text-gray-700"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                Productos
-                                </Link>
-                                {/* Opciones de menú Mobile */}
-                                {menuOptions.map((option) => (
-                                <Disclosure key={option.id} as="div" className="-mx-3">
-                                    {({ open }) => (
-                                    <>
-                                    <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 focus:outline-none">
-                                        <div className="flex items-center gap-x-3">
-                                            <span className="text-base">{option.icon}</span>
-                                            {option.name}
-                                        </div>
-                                        <ChevronDownIcon
-                                        className={classNames(open ? "rotate-180" : "", "h-5 w-5 flex-none")}
-                                        aria-hidden="true"
-                                        />
-                                    </Disclosure.Button>
-                                    <Disclosure.Panel className="mt-2 space-y-2">
-                                        <Link
-                                            href={`/${option.id}`}
-                                            className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-blue-600 hover:bg-gray-50"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                        Ver todos los productos de {option.name}
-                                        </Link>
-                                        {getCategoriesByItemType(option.id).map((category) => (
-                                        <Link
-                                            key={category.id}
-                                            href={`/${option.id}/${replaceSpacesWithDashes(category.name)}`}
-                                            className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                        {category.name.charAt(0).toUpperCase() + category.name.slice(1)}
-                                        </Link>
-                                        ))}
-                                        <hr className="m-4 border-t border-dashed border-gray-300" />
-                                    </Disclosure.Panel>
-                                    </>
-                                    )}
-                                </Disclosure>
-                                ))}
-                                <Link
-                                    href="/promotions"
-                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-rose-600 hover:bg-gray-50"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
-                                    Promociones
-                                </Link>
-                                <Link
-                                    href="/contact"
-                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
-                                    Contacto
-                                </Link>
+                                    <span className="sr-only">Close menu</span>
+                                    <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                                </button>
                             </div>
-                        </div>
-                    </div>
-                </Dialog.Panel>
-            </Dialog>
+                            <div className="mt-6 flow-root">
+                                <div className="-my-6 divide-y divide-gray-500/10">
+                                    <div className="space-y-2 py-6">
+                                        {/* Opciones de menú Mobile */}
+                                        {menuOptions.map((option) => (
+                                            <Disclosure key={option.id} as="div" className="-mx-3">
+                                                {({ open }) => (
+                                                    <>
+                                                        <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 focus:outline-none">
+                                                            <div className="flex items-center gap-x-3">
+                                                                <span className="text-base">{option.icon}</span>
+                                                                {option.name}
+                                                            </div>
+                                                            <ChevronDownIcon
+                                                                className={classNames(open ? "rotate-180" : "", "h-5 w-5 flex-none")}
+                                                                aria-hidden="true"
+                                                            />
+                                                        </Disclosure.Button>
+                                                        <Disclosure.Panel className="mt-2 space-y-2">
+                                                            <Link
+                                                                href={`/${option.id}`}
+                                                                className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-blue-600 hover:bg-gray-50"
+                                                                onClick={() => setMobileMenuOpen(false)}
+                                                            >
+                                                                Ver todos los productos de {option.name}
+                                                            </Link>
+                                                            {getCategoriesByItemType(option.id).map((category) => (
+                                                                <Link
+                                                                    key={category.id}
+                                                                    href={`/${option.id}/${replaceSpacesWithDashes(category.name)}`}
+                                                                    className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                                                    onClick={() => setMobileMenuOpen(false)}
+                                                                >
+                                                                    {category.name.charAt(0).toUpperCase() + category.name.slice(1)}
+                                                                </Link>
+                                                            ))}
+                                                            <hr className="m-4 border-t border-dashed border-gray-300" />
+                                                        </Disclosure.Panel>
+                                                    </>
+                                                )}
+                                            </Disclosure>
+                                        ))}
+                                        <Link
+                                            href="/promotions"
+                                            className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-rose-600 hover:bg-gray-50"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            <span role="img" aria-label="Promociones" className="mr-2">🏷️</span>
+                                            Promociones
+                                        </Link>
+                                        <Link
+                                            href="/contact"
+                                            className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            <span role="img" aria-label="Contacto" className="mr-2">📞</span>
+                                            Contacto
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </Dialog.Panel>
+                    </Transition.Child>
+                </Dialog>
+            </Transition>
         </header>
     )
 }

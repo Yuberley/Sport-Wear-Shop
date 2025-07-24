@@ -39,10 +39,12 @@ export default async function ItemType(props: any) {
 
     const products: Product[] = [];
     
+    console.log('itemTypeSlug', itemTypeSlug);
+
     const { data } = await supabase
         .from('products')
         .select('*')
-        .eq('itemType', itemTypeSlug)
+        .eq('item_type', itemTypeSlug)
         .eq('is_available', true)
         .eq('is_coming_soon', false);
 

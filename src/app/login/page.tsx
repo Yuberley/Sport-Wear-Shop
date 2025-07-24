@@ -66,7 +66,7 @@ export default function Login({
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-background">
             <Image
-                    src="/logo_ylsport.jpg"
+                    src="/logo_ylsport.png"
                     alt="logo"
                     width={300}
                     height={300}
