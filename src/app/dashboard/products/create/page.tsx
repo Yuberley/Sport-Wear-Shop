@@ -24,6 +24,7 @@ import {
     RemoveImageFromLocal,
     HandlerImagesInLocal, 
 } from '@/utils/handlerImages';
+import { isProductValid } from '@/utils/validations';
 
 export default function CreateProduct() {
 
@@ -419,31 +420,14 @@ export default function CreateProduct() {
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             <Button
                                 type="submit"
-                                color={
-                                    !product.name ||
-                                    !product.price ||
-                                    !product.category ||
-                                    !product.colors.length ||
-                                    !product.sizes.length ||
-                                    !product.description ||
-                                    loadingSaveProduct ||
-                                    !localImages?.length ?
+                                color={ !isProductValid(product) || loadingSaveProduct ?
                                         'default' 
                                     :
                                         'primary'
                                 }
                                 className="w-full"
                                 onClick={(e) => { saveProduct(e) }}
-                                disabled={
-                                    !product.name ||
-                                    !product.price ||
-                                    !product.category ||
-                                    !product.colors.length ||
-                                    !product.sizes.length ||
-                                    !product.description ||
-                                    loadingSaveProduct ||
-                                    !localImages?.length
-                                }
+                                disabled={ !isProductValid(product) || loadingSaveProduct }
                             >
                                 Save
 
