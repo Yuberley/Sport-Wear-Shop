@@ -49,6 +49,7 @@ export const mapProductToApi = (product: Product): any => {
         source_image: product.imagesSrc,
         is_available: product.isAvailable,
         is_coming_soon: product.isComingSoon,
+        item_type: product.itemType,
     }
 }
 

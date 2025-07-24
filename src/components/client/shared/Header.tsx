@@ -12,16 +12,11 @@ import LogoYLSPORT from "@public/logo_ylsport.jpg"
 import type { Category } from "@/interfaces"
 import { useRouter } from "next/navigation"
 import { GetCategories } from "@/lib/supabase/handlers/handleCategories"
+import { menuOptions } from "@/data/MenuOptions"
 
 function classNames(...classes: (string | boolean | null | undefined)[]) {
     return classes.filter(Boolean).join(" ")
 }
-
-const menuOptions = [
-    { id: "mujer", name: "Mujer", icon: "👩" },
-    { id: "hombre", name: "Hombre", icon: "👨" },
-    { id: "accesorios", name: "Accesorios", icon: "👓" },
-]
 
 export default function Header() {
     const router = useRouter()

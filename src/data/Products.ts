@@ -1,4 +1,4 @@
-import { Product } from "@/interfaces/Products";
+import { Product } from "@/interfaces";
 
 export const initialProduct: Product = {
     id: '',

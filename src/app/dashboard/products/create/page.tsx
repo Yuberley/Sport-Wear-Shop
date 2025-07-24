@@ -13,6 +13,7 @@ import { Product } from '@/interfaces/Products';
 import { Toaster, toast } from 'sonner';
 import { MAX_SIZE_IMAGE_IN_MB } from '@/constants';
 import { initialProduct } from '@/data/Products';
+import { menuOptions } from '@/data/MenuOptions';
 import { 
     GetSizes, 
     GetColors, 
@@ -155,6 +156,11 @@ export default function CreateProduct() {
                                     })
                                 }
 							/>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
+                        <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             <Select
                                 required
                                 label="Category"
@@ -169,6 +175,24 @@ export default function CreateProduct() {
                                     categories.map((category) => (
                                         <SelectItem key={category.name} value={category.name}>
                                             {category.name}
+                                        </SelectItem>
+                                    ))
+                                }
+                            </Select>
+                            <Select
+                                required
+                                label="Item Type"
+                                value={product.itemType}
+                                placeholder="Select an item type"
+                                onChange={(e) => setProduct({
+                                    ...product,
+                                    itemType: e.target.value,
+                                })}
+                            >
+                                {
+                                    menuOptions.map((option) => (
+                                        <SelectItem key={option.id} value={option.id}>
+                                            {option.id}
                                         </SelectItem>
                                     ))
                                 }
@@ -420,14 +444,14 @@ export default function CreateProduct() {
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             <Button
                                 type="submit"
-                                color={ !isProductValid(product) || loadingSaveProduct ?
+                                color={ !isProductValid(product) || loadingSaveProduct  || localImages.length === 0 ?
                                         'default' 
                                     :
                                         'primary'
                                 }
                                 className="w-full"
                                 onClick={(e) => { saveProduct(e) }}
-                                disabled={ !isProductValid(product) || loadingSaveProduct }
+                                disabled={ !isProductValid(product) || loadingSaveProduct || localImages.length === 0 }
                             >
                                 Save
 
