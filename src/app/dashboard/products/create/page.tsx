@@ -8,21 +8,22 @@ import { Card, CardFooter, Textarea  } from '@nextui-org/react';
 import { Switch } from '@nextui-org/switch';
 import { Spinner } from '@nextui-org/spinner';
 import { Image } from "@nextui-org/react";
-import { supabase } from '@/lib/supabase/initSupabase';
-import { SUPABASE_URL } from '@/environment';
 import { Category, Color, Size } from '@/interfaces';
 import { Product } from '@/interfaces/Products';
-import { convertPhraseToSnakeCase } from '@/utils';
 import { Toaster, toast } from 'sonner';
-import { MAX_SIZE_IMAGE_IN_MB, NAME_BUCKET_IMAGES } from '@/constants';
-import { mapProduct } from '@/utils/mappers';
+import { MAX_SIZE_IMAGE_IN_MB } from '@/constants';
 import { initialProduct } from '@/data/Products';
 import { 
-    GetColors, 
     GetSizes, 
+    GetColors, 
+    SaveProduct,
     GetCategories,
     SearhProductById,
 } from '@/lib/supabase/handlers';
+import { 
+    RemoveImageFromLocal,
+    HandlerImagesInLocal, 
+} from '@/utils/handlerImages';
 
 export default function CreateProduct() {
 
@@ -32,7 +33,6 @@ export default function CreateProduct() {
     const [product, setProduct] = useState<Product>(initialProduct);
 
     const [loadingSaveProduct, setLoadingSaveProduct] = useState<boolean>(false);
-    const [urlImages, setUrlImages] = useState<string[]>([]);
     const [localImages, setLocalImages] = useState<File[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [colors, setColors] = useState<Color[]>([]);
@@ -73,98 +73,21 @@ export default function CreateProduct() {
         }
     }, [productEditId]);
 
-    const saveProduct =  () => {
-        
+    const saveProduct =  async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+
         setLoadingSaveProduct(true);
+        await SaveProduct(product, localImages);
+        setLoadingSaveProduct(false);
+        
+        setProduct(initialProduct);
+        setLocalImages([]);
+        toast.success('Product saved successfully');
 
-        uploadImagesStorage().then(async (urlImages: string[]) => {
-            const { data, error, status } = await supabase
-                .from('products')
-                .insert([
-                    {
-                        name: product.name.trim(),
-                        description: product.description.trim(),
-                        price: product.price,
-                        discount: product.discount || null,
-                        colors: product.colors,
-                        sizes: product.sizes,
-                        category: product.category,
-                        source_image: urlImages,
-                        is_available: product.isAvailable,
-                        is_coming_soon: product.isComingSoon,
-                    }
-                ])
-
-            if (error) {
-                setLoadingSaveProduct(false);
-                toast.error('Error inserting product',{
-                    description: error.message,
-                });
-                return;
-            }
-
-            if (status !== 201) {
-                setLoadingSaveProduct(false);
-                toast.error('Error inserting product');
-                return;
-            }
-
-            toast.success('Product saved successfully');
-
-            setProduct(initialProduct);
-
-            setLocalImages([]);
-            setLoadingSaveProduct(false);
-
-            window.location.reload();
-        });
-
-    }
-
-    const uploadImagesStorage = async (): Promise<string[]> => {
-
-        if (!localImages) return [];
-
-        const files = localImages;
-
-        const sourceImageFinal: string[] = [];
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const fullName = file.name;
-            const extension = fullName.split('.').pop();
-            const fileName = convertPhraseToSnakeCase(product.name) + '_' + new Date().getTime() + '.' + extension;
-
-            const fileImage = files[i];
-
-            const { data, error } = await supabase
-            .storage
-            .from(NAME_BUCKET_IMAGES)
-            .upload(fileName, fileImage, {
-                cacheControl: '36000',
-                upsert: false
-            })
-
-            if (error) {
-                toast.error('Error uploading image',{
-                    description: error.message,
-                });
-                return [];
-            }
- 
-            const storageUrl = '/storage/v1/object/public/images/';
-            const urlImage = SUPABASE_URL + storageUrl + fileName;
-            
-            sourceImageFinal.push(urlImage);
-
-            setUrlImages([...urlImages, urlImage]);
-        }
-
-        return sourceImageFinal;
+        window.location.reload();
     }
 
     const calculateNewPrice = () => {
-
         if (product.discount === '0'){
             setProduct({
                 ...product,
@@ -189,33 +112,18 @@ export default function CreateProduct() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [product.price, product.discount]);
 
-
     const handleImages = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) return;
 
-        const maxSize = MAX_SIZE_IMAGE_IN_MB * 1024 * 1024;
-
-        for (let i = 0; i < event.target.files.length; i++) {
-            const file = event.target.files[i];
-            if (file.size > maxSize) {
-                alert(`The image size must be less than ${MAX_SIZE_IMAGE_IN_MB}MB`);
-                return;
-            }
-        }
-
-        const files = event.target.files as FileList;
+        const imageList = await HandlerImagesInLocal(event);
         
-        const imagesArray = Array.from(files);
+        if (!imageList) return;
 
-        if (files?.length) {
-            setLocalImages( [...localImages, ...imagesArray] );
-        }
+        setLocalImages([...localImages, ...imageList]);
     }
 
     const removeLocalImage = (index: number) => {
-        const newImages = Array.from(localImages);
-        newImages.splice(index, 1);
-        setLocalImages(newImages);
+        RemoveImageFromLocal(index, localImages, setLocalImages);
     }
 
 	return (
@@ -449,10 +357,7 @@ export default function CreateProduct() {
                                 color='success'
                                 multiple
                                 max={5}
-                                onChange={(e) => {
-                                    handleImages(e);
-                                    // uploadImagesStorage(e);
-                                }}
+                                onChange={(e) => { handleImages(e) }}
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -471,7 +376,6 @@ export default function CreateProduct() {
                     <div className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-wrap">
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             <div className="flex flex-wrap gap-4 justify-center">
-
                                 {
                                     localImages &&
                                     Array.from(localImages).map((image, index) => (
@@ -498,9 +402,7 @@ export default function CreateProduct() {
                                                         color="default" 
                                                         radius="lg" 
                                                         size="sm"
-                                                        onClick={() => {
-                                                            removeLocalImage(index);
-                                                        }}
+                                                        onClick={() => { removeLocalImage(index) }}
                                                     >
                                                         Remove
                                                     </Button>
@@ -508,7 +410,6 @@ export default function CreateProduct() {
                                             </Card>
                                         </div>
                                     ))
-
                                 }
                             </div>
                         </div>
@@ -532,10 +433,7 @@ export default function CreateProduct() {
                                         'primary'
                                 }
                                 className="w-full"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    saveProduct();
-                                }}
+                                onClick={(e) => { saveProduct(e) }}
                                 disabled={
                                     !product.name ||
                                     !product.price ||

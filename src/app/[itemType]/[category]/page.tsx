@@ -30,9 +30,6 @@ export default async function CategoryByItemType(props: any) {
     let itemTypeTitle = '';
     let itemTypeSlug = '';
 
-    console.log("Item Type:", itemType);
-    console.log("Category:", category);
-
     if (!category || !itemType) {
         return notFound;
     }

@@ -37,15 +37,13 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
         };
     }
 
-    const { data: productData } = await supabase
+    const { data: productData, error: productError } = await supabase
         .from('products')
         .select('*')
         .eq('id', id)
         .single();
 
-    const product: Product = mapProduct(productData);
-
-    if (!product) {
+    if (productError || !productData) {
         return {
             title: 'Producto no encontrado | YL SPORT',
             description: 'No se encontró el producto solicitado.',
@@ -57,6 +55,8 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
             },
         };
     }
+    
+    const product: Product = mapProduct(productData);
 
     return {
         title: `${product.name} | YL SPORT`,
@@ -87,8 +87,7 @@ export default async function Page({ searchParams }: PageProps) {
         supabase.from('types_sizes').select('value'),
     ]);
 
-    if (productError || !productData) {
-        console.error('Error fetching product', productError);
+    if (productError) {
         return productNotFound;
     }
 

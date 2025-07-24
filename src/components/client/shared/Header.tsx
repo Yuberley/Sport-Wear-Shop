@@ -10,8 +10,8 @@ import Image from "next/image"
 import { replaceSpacesWithDashes } from "@/utils"
 import LogoYLSPORT from "@public/logo_ylsport.jpg"
 import type { Category } from "@/interfaces"
-import { supabase } from "@/lib/supabase/initSupabase"
 import { useRouter } from "next/navigation"
+import { GetCategories } from "@/lib/supabase/handlers/handleCategories"
 
 function classNames(...classes: (string | boolean | null | undefined)[]) {
     return classes.filter(Boolean).join(" ")
@@ -28,13 +28,8 @@ export default function Header() {
     const [categories, setCategories] = useState<Category[]>([])
 
     const getCategories = async () => {
-        const { data, error } = await supabase.from("types_categories").select("*")
-        if (error) {
-          console.error("Error fetching categories", error)
-        }
-        if (data) {
-          setCategories(data)
-        }
+        const categories = await GetCategories()
+        setCategories(categories)
     }
 
     useEffect(() => {

@@ -3,7 +3,7 @@ import { SUPABASE_URL } from '@/environment';
 import { Product } from '@/interfaces/Products';
 import { supabase } from '@/lib/supabase/initSupabase';
 import { convertPhraseToSnakeCase } from '@/utils';
-import { mapProductList } from '@/utils/mappers';
+import { mapProductList, mapProductToApi } from '@/utils/mappers';
 import { toast } from 'sonner';
 
 export const SerchProductsByName = async (searchProductName: string): Promise<Product[]> => {
@@ -58,47 +58,36 @@ export const SearhProductById = async (productId: string): Promise<Product | nul
     return productMapped || null;
 }
 
-export const SaveProduct = async (product: Product, images: File[]): Promise<Product | null> => {
+export const SaveProduct = async (product: Product, images: File[]) => {
     const urlImages = await uploadImagesStorage(images, product);
+    
     if (urlImages.length === 0) {
         toast.error('No images uploaded');
-        return null;
+        return;
     }
 
-    const { data, error, status } = await supabase
+    product.imagesSrc = urlImages;
+
+    const productToBeSend = mapProductToApi(product);
+
+    const { error, status } = await supabase
         .from('products')
-        .insert([
-            {
-                name: product.name.trim(),
-                description: product.description.trim(),
-                price: product.price,
-                discount: product.discount || null,
-                colors: product.colors,
-                sizes: product.sizes,
-                category: product.category,
-                source_image: urlImages,
-                is_available: product.isAvailable,
-                is_coming_soon: product.isComingSoon,
-            }
-        ])
+        .insert([productToBeSend])
         .single();
     
     if (error) {
         toast.error('Error inserting product', {
             description: error.message,
         });
-        return null;
+        return;
     }
     
     if (status !== 201) {
         toast.error('Error inserting product');
-        return null;
+        return;
     }
 
     toast.success('Product saved successfully');
-
-    const productMapped = mapProductList([data])[0];
-    return productMapped || null;
 }
 
 const uploadImagesStorage = async (images: File[], product: Product): Promise<string[]> => {
@@ -119,9 +108,6 @@ const uploadImagesStorage = async (images: File[], product: Product): Promise<st
                 cacheControl: '36000',
                 upsert: false
             })
-
-        // TODO: Remove console.log in production
-        console.log('data', data);
 
         if (error) {
             toast.error('Error uploading image',{

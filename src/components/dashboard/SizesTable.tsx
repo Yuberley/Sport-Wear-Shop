@@ -8,7 +8,6 @@ import {
     TableRow, 
     TableCell } from "@nextui-org/table";
 import { Size } from '@/interfaces';
-import { toast, Toaster } from 'sonner';
 import { DeleteIcon } from './icons/DeleteIcons';
 import { EditIcon } from './icons/EditIcon';
 

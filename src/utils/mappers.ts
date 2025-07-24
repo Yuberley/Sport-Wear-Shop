@@ -37,6 +37,21 @@ export const mapProductList = (productList: any): Product[] => {
     )
 }
 
+export const mapProductToApi = (product: Product): any => {
+    return {
+        name: product.name.trim(),
+        description: product.description.trim(),
+        price: product.price,
+        discount: product.discount || null,
+        colors: product.colors,
+        sizes: product.sizes,
+        category: product.category,
+        source_image: product.imagesSrc,
+        is_available: product.isAvailable,
+        is_coming_soon: product.isComingSoon,
+    }
+}
+
 export const mapCategory = (category: any): Category => {
     return {
         id: category.id || '',

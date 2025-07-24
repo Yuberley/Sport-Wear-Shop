@@ -22,7 +22,6 @@ import { NAME_BUCKET_IMAGES } from '@/constants';
 import { DeleteIcon } from '@/components/dashboard/icons/DeleteIcons';
 import { EditIcon } from '@/components/dashboard/icons/EditIcon';
 import { SearchIcon } from '@/components/dashboard/icons/SearchIcon';
-import { ViewIcon } from  '@/components/dashboard/icons/ViewIcon';
 import { LoadingContent } from '@/components/client/shared/LoadingContent';
 import { EyeIcon } from '@/components/dashboard/icons/EyeIcon';
 import { ProductSidenav } from '@/components/dashboard/products/ProductSidenav';
